@@ -10,13 +10,13 @@
   --bg:#f6f7f9; --panel:#fff; --ink:#1c232b; --muted:#6b7785;
   --line:#e6e9ef; --bar:#1f4e79; --bar-ink:#fff;
 
-  /* table sizing (auto-fit still works) */
+  /* table sizing */
   --tbl-font:14px; --cell-py:10px; --head-font:12px;
 
-  /* logo autoscale (set by JS) */
-  --logoH: 64px;
-  --logoWLeft: 260px;
-  --logoWRight: 340px;
+  /* logo sizes (set by JS) */
+  --logoH: 80px;
+  --logoWLeft: 360px;
+  --logoWRight: 460px;
 }
 
 *{box-sizing:border-box}
@@ -25,44 +25,42 @@ body{
   margin:0;
   font-family:Arial,Helvetica,sans-serif;
   background:var(--bg);
-  color:var(--ink)
+  color:var(--ink);
 }
 
-/* ===== CORNER LOGOS (transparent PNGs) ===== */
+/* ===== CORNER LOGOS ===== */
 .cornerWrap{
   position:fixed;
-  top:10px;
-  z-index:999;
+  top:16px;
+  z-index:1000;
   pointer-events:none;
   display:flex;
-  align-items:flex-start;
+  align-items:center;
 }
-.corner-left{left:14px}
-.corner-right{right:14px}
+.corner-left{left:20px}
+.corner-right{right:20px}
 
 .corner-logo{
   height:var(--logoH);
-  width:auto;
   max-height:var(--logoH);
+  width:auto;
   object-fit:contain;
-  background:none;
 }
 .corner-left .corner-logo{ max-width:var(--logoWLeft); }
 .corner-right .corner-logo{ max-width:var(--logoWRight); }
 
 /* ===== HEADER ===== */
 .top{
-  height:110px;
+  height:120px;
   background:var(--panel);
   border-bottom:1px solid var(--line);
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:0 16px;
 }
 .centerTitle{
   font-weight:900;
-  font-size:34px;
+  font-size:36px;
   letter-spacing:1px;
   color:var(--bar);
   text-transform:uppercase;
@@ -70,11 +68,11 @@ body{
 
 /* ===== LAYOUT ===== */
 .wrap{
-  height:calc(100vh - 110px);
+  height:calc(100vh - 120px);
   padding:18px;
   display:grid;
   grid-template-columns:1fr 1.2fr 1fr;
-  gap:18px
+  gap:18px;
 }
 .panel{
   background:var(--panel);
@@ -83,7 +81,6 @@ body{
   display:flex;
   flex-direction:column;
   overflow:hidden;
-  min-height:0;
 }
 .bar{
   background:var(--bar);
@@ -98,14 +95,12 @@ body{
   display:flex;
   flex-direction:column;
   flex:1;
-  min-height:0;
 }
 .tableWrap{
-  overflow:hidden; /* no scrolling on TV */
+  overflow:hidden;
   flex:1;
   border-top:1px solid var(--line);
   margin-top:8px;
-  min-height:0;
 }
 table{
   width:100%;
@@ -120,9 +115,6 @@ thead th{
   padding:8px 10px;
   background:#fbfbfc;
   text-transform:uppercase;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
 }
 tbody td{
   padding:var(--cell-py) 10px;
@@ -137,7 +129,7 @@ tbody tr{border-left:10px solid transparent}
 
 @media (max-width:1200px){
   .wrap{grid-template-columns:1fr}
-  .centerTitle{font-size:26px}
+  .centerTitle{font-size:28px}
 }
 </style>
 </head>
@@ -159,54 +151,45 @@ tbody tr{border-left:10px solid transparent}
 
 <div class="wrap">
 
-  <!-- TrenchSafe -->
   <section class="panel">
     <div class="bar">TrenchSafe</div>
     <div class="content">
       <div class="muted" id="tsCount"></div>
       <div class="tableWrap">
         <table>
-          <thead>
-            <tr>
-              <th>SO #</th><th>Customer</th><th>Workstation</th><th>Station</th><th>Due</th>
-            </tr>
-          </thead>
+          <thead><tr>
+            <th>SO #</th><th>Customer</th><th>Workstation</th><th>Station</th><th>Due</th>
+          </tr></thead>
           <tbody id="tsBody"></tbody>
         </table>
       </div>
     </div>
   </section>
 
-  <!-- Laird Plastics -->
   <section class="panel">
     <div class="bar">Laird Plastics</div>
     <div class="content">
       <div class="muted" id="allCount"></div>
       <div class="tableWrap">
         <table>
-          <thead>
-            <tr>
-              <th>SO #</th><th>Customer</th><th>Workstation</th><th>Station</th><th>Due</th>
-            </tr>
-          </thead>
+          <thead><tr>
+            <th>SO #</th><th>Customer</th><th>Workstation</th><th>Station</th><th>Due</th>
+          </tr></thead>
           <tbody id="allBody"></tbody>
         </table>
       </div>
     </div>
   </section>
 
-  <!-- Pneumatic Vacuum -->
   <section class="panel">
     <div class="bar">Pneumatic Vacuum</div>
     <div class="content">
       <div class="muted" id="pveCount"></div>
       <div class="tableWrap">
         <table>
-          <thead>
-            <tr>
-              <th>SO #</th><th>Customer</th><th>Workstation</th><th>Station</th><th>Due</th>
-            </tr>
-          </thead>
+          <thead><tr>
+            <th>SO #</th><th>Customer</th><th>Workstation</th><th>Station</th><th>Due</th>
+          </tr></thead>
           <tbody id="pveBody"></tbody>
         </table>
       </div>
@@ -216,176 +199,97 @@ tbody tr{border-left:10px solid transparent}
 </div>
 
 <script>
-/* =========================
-   LOGOS (RAW GITHUB URLS)
-   ========================= */
+/* LOGO URLS */
 const LOGO_LEFT_URL  = "https://raw.githubusercontent.com/dksmith22/LegoRoomSchedule/main/TrenchSafe_logo-label.png";
 const LOGO_RIGHT_URL = "https://raw.githubusercontent.com/dksmith22/LegoRoomSchedule/main/Laird%20Logo.png";
 
-const logoLeft  = document.getElementById("logoLeft");
-const logoRight = document.getElementById("logoRight");
 logoLeft.src  = LOGO_LEFT_URL;
 logoRight.src = LOGO_RIGHT_URL;
 
-/**
- * Auto-scale + visual balance:
- * - Height scales with screen height (1080p vs 4K)
- * - Width caps prevent crowding the title
- * - Right logo allowed slightly wider (it’s naturally wider)
- */
-function fitCornerLogos(){
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
+/* HARD SCALE FOR TV SCREENS */
+function sizeLogos(){
+  const is4K = window.innerWidth >= 3000;
 
-  // Height scales with viewport height, clamped
-  const logoH = Math.round(Math.min(80, Math.max(44, vh * 0.058)));
-
-  // Width caps based on viewport width (keep center title breathing room)
-  const baseW  = Math.min(440, Math.max(220, Math.round(vw * 0.26)));
-  const leftW  = Math.round(baseW * 0.88);
-  const rightW = Math.round(baseW * 1.00);
-
-  document.documentElement.style.setProperty("--logoH", logoH + "px");
-  document.documentElement.style.setProperty("--logoWLeft", leftW + "px");
-  document.documentElement.style.setProperty("--logoWRight", rightW + "px");
+  if(is4K){
+    document.documentElement.style.setProperty("--logoH","110px");
+    document.documentElement.style.setProperty("--logoWLeft","520px");
+    document.documentElement.style.setProperty("--logoWRight","640px");
+  }else{
+    document.documentElement.style.setProperty("--logoH","88px");
+    document.documentElement.style.setProperty("--logoWLeft","380px");
+    document.documentElement.style.setProperty("--logoWRight","480px");
+  }
 }
 
-logoLeft.addEventListener("load", fitCornerLogos);
-logoRight.addEventListener("load", fitCornerLogos);
-window.addEventListener("resize", fitCornerLogos);
-fitCornerLogos();
+window.addEventListener("resize", sizeLogos);
+sizeLogos();
 
-/* =========================
-   DATA / TABLE LOGIC
-   ========================= */
-const JSON_URL = "https://raw.githubusercontent.com/dksmith22/sharepoint-json-feed-all/refs/heads/main/sharepointdata.json";
+/* ================= DATA ================= */
+const JSON_URL="https://raw.githubusercontent.com/dksmith22/sharepoint-json-feed-all/refs/heads/main/sharepointdata.json";
 
-const K = {
-  so:"SO Number",
-  customer:"Customer",
-  workstation:"Workstation",
-  station:"Station Order",
-  due:"Due Date",
-  trench:"Trenchsafe",
-  complete:"Complete"
+const K={
+  so:"SO Number", customer:"Customer", workstation:"Workstation",
+  station:"Station Order", due:"Due Date",
+  trench:"Trenchsafe", complete:"Complete"
 };
 
-const esc = s => String(s ?? "").replace(/[&<>"']/g, m => ({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-}[m]));
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>(
+  {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]
+));
 
-const isOpen = o => String(o?.[K.complete] ?? "").trim().toLowerCase() !== "yes";
-const isTS   = o => String(o?.[K.trench] ?? "").trim().toLowerCase() === "yes";
-const isPVE  = o => String(o?.[K.customer] ?? "").toLowerCase().includes("pve");
+const isOpen=o=>String(o[K.complete]).toLowerCase()!=="yes";
+const isTS=o=>String(o[K.trench]).toLowerCase()==="yes";
+const isPVE=o=>String(o[K.customer]).toLowerCase().includes("pve");
 
-/* Date -> MM/DD/YY */
-function fmtDate(d){
-  const s = String(d ?? "").trim();
-  if (!s) return "";
-  const x = new Date(s);
-  if (isNaN(x)) return s;
-  const mm = String(x.getMonth()+1).padStart(2,"0");
-  const dd = String(x.getDate()).padStart(2,"0");
-  const yy = String(x.getFullYear()).slice(-2);
-  return `${mm}/${dd}/${yy}`;
-}
+const fmtDate=d=>{
+  const x=new Date(d);
+  if(isNaN(x))return d||"";
+  return `${String(x.getMonth()+1).padStart(2,"0")}/${String(x.getDate()).padStart(2,"0")}/${String(x.getFullYear()).slice(-2)}`;
+};
 
-/* Machine colors:
-   Unassigned = none
-   Saw = blue
-   Mario = green
-   Multicam = orange
-   Owen = purple
-*/
 function machineColor(ws){
-  const s = String(ws || "").toUpperCase();
-  if (!s || s.includes("UNASSIGNED")) return null;
-  if (s.includes("SAW")) return "#1f77b4";
-  if (s.includes("MARIO")) return "#2ca02c";
-  if (s.includes("MULTICAM")) return "#ff7f0e";
-  if (s.includes("OWEN")) return "#9467bd";
+  const s=String(ws||"").toUpperCase();
+  if(!s||s.includes("UNASSIGNED"))return null;
+  if(s.includes("SAW"))return "#1f77b4";
+  if(s.includes("MARIO"))return "#2ca02c";
+  if(s.includes("MULTICAM"))return "#ff7f0e";
+  if(s.includes("OWEN"))return "#9467bd";
   return null;
 }
-function tint(hex){
-  if(!hex) return "transparent";
-  const r = parseInt(hex.slice(1,3),16);
-  const g = parseInt(hex.slice(3,5),16);
-  const b = parseInt(hex.slice(5,7),16);
-  return `rgba(${r},${g},${b},0.10)`;
-}
+const tint=h=>h?`rgba(${parseInt(h.substr(1,2),16)},${parseInt(h.substr(3,2),16)},${parseInt(h.substr(5,2),16)},0.1)`:"transparent";
 
-function row(o){
-  const c = machineColor(o?.[K.workstation]);
+const row=o=>{
+  const c=machineColor(o[K.workstation]);
   return `
-    <tr style="border-left-color:${c || "transparent"}; background:${tint(c)}">
-      <td class="mono">${esc(o?.[K.so])}</td>
-      <td>${esc(o?.[K.customer])}</td>
-      <td>${esc(o?.[K.workstation])}</td>
-      <td>${esc(o?.[K.station])}</td>
-      <td class="mono">${esc(fmtDate(o?.[K.due]))}</td>
-    </tr>
-  `;
-}
-
-/* Auto-fit table text so all rows show (no scrolling) */
-function autoscaleTables(rowCounts){
-  const maxRows = Math.max(1, ...rowCounts);
-  const panel = document.querySelector(".panel");
-  if (!panel) return;
-
-  const bar = panel.querySelector(".bar");
-  const countLine = panel.querySelector(".content .muted");
-  const thead = panel.querySelector("thead");
-
-  const panelH = panel.getBoundingClientRect().height;
-  const availableForRows =
-    panelH
-    - (bar ? bar.getBoundingClientRect().height : 0)
-    - (countLine ? countLine.getBoundingClientRect().height : 0)
-    - (thead ? thead.getBoundingClientRect().height : 0)
-    - 44;
-
-  const targetRowH = Math.max(14, Math.floor(availableForRows / maxRows));
-  const font = Math.max(9, Math.min(14, Math.floor(targetRowH * 0.52)));
-  const padY = Math.max(2, Math.min(10, Math.floor((targetRowH - font) / 2)));
-  const headFont = Math.max(9, Math.min(12, font - 2));
-
-  document.documentElement.style.setProperty("--tbl-font", font + "px");
-  document.documentElement.style.setProperty("--cell-py", padY + "px");
-  document.documentElement.style.setProperty("--head-font", headFont + "px");
-}
+<tr style="border-left-color:${c||"transparent"};background:${tint(c)}">
+<td class="mono">${esc(o[K.so])}</td>
+<td>${esc(o[K.customer])}</td>
+<td>${esc(o[K.workstation])}</td>
+<td>${esc(o[K.station])}</td>
+<td class="mono">${esc(fmtDate(o[K.due]))}</td>
+</tr>`;
+};
 
 async function load(){
-  const r = await fetch(JSON_URL + "?cb=" + Date.now(), { cache:"no-store" });
-  const d = await r.json();
-  const arr = Array.isArray(d) ? d : [];
-  const open = arr.filter(isOpen);
+  const r=await fetch(JSON_URL+"?cb="+Date.now());
+  const d=await r.json();
+  const open=d.filter(isOpen);
 
-  const ts  = open.filter(isTS);
-  const pve = open.filter(isPVE);
-  const all = open.filter(o => !isTS(o) && !isPVE(o)); // center excludes TS + PVE
+  const ts=open.filter(isTS);
+  const pve=open.filter(isPVE);
+  const all=open.filter(o=>!isTS(o)&&!isPVE(o));
 
-  document.getElementById("tsBody").innerHTML  = ts.map(row).join("");
-  document.getElementById("allBody").innerHTML = all.map(row).join("");
-  document.getElementById("pveBody").innerHTML = pve.map(row).join("");
+  tsBody.innerHTML=ts.map(row).join("");
+  allBody.innerHTML=all.map(row).join("");
+  pveBody.innerHTML=pve.map(row).join("");
 
-  document.getElementById("tsCount").textContent  = `${ts.length} orders`;
-  document.getElementById("allCount").textContent = `${all.length} orders`;
-  document.getElementById("pveCount").textContent = `${pve.length} orders`;
-
-  requestAnimationFrame(() => autoscaleTables([ts.length, all.length, pve.length]));
+  tsCount.textContent=`${ts.length} orders`;
+  allCount.textContent=`${all.length} orders`;
+  pveCount.textContent=`${pve.length} orders`;
 }
 
 load();
-setInterval(load, 30000);
-
-window.addEventListener("resize", () => {
-  fitCornerLogos();
-  const tsRows  = document.querySelectorAll("#tsBody tr").length;
-  const allRows = document.querySelectorAll("#allBody tr").length;
-  const pveRows = document.querySelectorAll("#pveBody tr").length;
-  autoscaleTables([tsRows, allRows, pveRows]);
-});
+setInterval(load,30000);
 </script>
 
 </body>
