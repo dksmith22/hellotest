@@ -10,12 +10,11 @@
   --bg:#f6f7f9; --panel:#fff; --ink:#1c232b; --muted:#6b7785;
   --line:#e6e9ef; --bar:#1f4e79; --bar-ink:#fff;
 
-  /* table sizing */
   --tbl-font:14px; --cell-py:10px; --head-font:12px;
 
-  /* logo sizing (set by JS) */
-  --logoBase: 84px;   /* TrenchSafe */
-  --logoLarge: 126px;/* Laird (1.5x) */
+  /* Logo sizing */
+  --logoBase: 84px;    /* TrenchSafe */
+  --logoLarge: 126px;  /* Laird (1.5x) */
 }
 
 *{box-sizing:border-box}
@@ -27,18 +26,16 @@ body{
   color:var(--ink)
 }
 
-/* ===== HEADER ===== */
+/* ===== HEADER (height unchanged) ===== */
 .top{
   position:relative;
-  height:130px; /* unchanged */
+  height:130px;
   background:var(--panel);
   border-bottom:1px solid var(--line);
   display:flex;
   align-items:center;
   justify-content:center;
 }
-
-/* Center title */
 .centerTitle{
   font-weight:900;
   font-size:38px;
@@ -48,34 +45,28 @@ body{
   z-index:2;
 }
 
-/* ===== HEADER LOGOS ===== */
+/* ===== HEADER LOGOS (centered vertically) ===== */
 .header-logo{
   position:absolute;
   top:50%;
   transform:translateY(-50%);
   pointer-events:none;
 }
-
-.header-logo.left{
-  left:24px;
-}
-.header-logo.right{
-  right:24px;
-}
+.header-logo.left{ left:24px; }
+.header-logo.right{ right:24px; }
 
 .header-logo.left img{
   height:var(--logoBase);
   width:auto;
   object-fit:contain;
 }
-
 .header-logo.right img{
   height:var(--logoLarge);
   width:auto;
   object-fit:contain;
 }
 
-/* ===== LAYOUT ===== */
+/* ===== MAIN LAYOUT ===== */
 .wrap{
   height:calc(100vh - 130px);
   padding:18px;
@@ -90,6 +81,7 @@ body{
   display:flex;
   flex-direction:column;
   overflow:hidden;
+  min-height:0;
 }
 .bar{
   background:var(--bar);
@@ -98,18 +90,21 @@ body{
   font-weight:900;
   text-transform:uppercase;
   text-align:center;
+  flex:0 0 auto;
 }
 .content{
   padding:10px;
   display:flex;
   flex-direction:column;
   flex:1;
+  min-height:0;
 }
 .tableWrap{
-  overflow:hidden;
-  flex:1;
+  overflow:hidden;     /* no scrolling */
+  flex:1 1 auto;
   border-top:1px solid var(--line);
   margin-top:8px;
+  min-height:0;
 }
 table{
   width:100%;
@@ -124,6 +119,9 @@ thead th{
   padding:8px 10px;
   background:#fbfbfc;
   text-transform:uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 tbody td{
   padding:var(--cell-py) 10px;
@@ -135,6 +133,54 @@ tbody td{
 tbody tr{border-left:10px solid transparent}
 .mono{font-variant-numeric:tabular-nums}
 .muted{color:var(--muted)}
+
+/* ===== Weather widget (bottom of Pneumatic column) ===== */
+.weatherWidget{
+  flex:0 0 auto;
+  margin-top:10px;
+  border-top:1px solid var(--line);
+  background:#fbfbfc;
+  padding:10px 12px;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  min-height:86px;
+}
+.weatherLeft{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+.weatherIcon{
+  font-size:34px;
+  line-height:1;
+}
+.weatherMain{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+}
+.weatherTemp{
+  font-weight:900;
+  font-size:22px;
+  line-height:1.1;
+}
+.weatherDesc{
+  font-size:12px;
+  color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.weatherRight{
+  text-align:right;
+  font-size:11px;
+  color:var(--muted);
+  white-space:nowrap;
+}
 
 @media (max-width:1200px){
   .wrap{grid-template-columns:1fr}
@@ -148,16 +194,13 @@ tbody tr{border-left:10px solid transparent}
 <!-- HEADER -->
 <div class="top">
 
-  <!-- TrenchSafe logo -->
   <div class="header-logo left">
     <img src="https://raw.githubusercontent.com/dksmith22/LegoRoomSchedule/main/TrenchSafe_logo-label.png"
          alt="TrenchSafe Logo">
   </div>
 
-  <!-- Title -->
   <div class="centerTitle">OPEN PRODUCTION ORDERS</div>
 
-  <!-- Laird logo (1.5x) -->
   <div class="header-logo right">
     <img src="https://raw.githubusercontent.com/dksmith22/LegoRoomSchedule/main/Laird%20Logo.png"
          alt="Laird Plastics Logo">
@@ -167,6 +210,7 @@ tbody tr{border-left:10px solid transparent}
 
 <div class="wrap">
 
+  <!-- TrenchSafe -->
   <section class="panel">
     <div class="bar">TrenchSafe</div>
     <div class="content">
@@ -182,6 +226,7 @@ tbody tr{border-left:10px solid transparent}
     </div>
   </section>
 
+  <!-- Laird Plastics -->
   <section class="panel">
     <div class="bar">Laird Plastics</div>
     <div class="content">
@@ -197,10 +242,12 @@ tbody tr{border-left:10px solid transparent}
     </div>
   </section>
 
+  <!-- Pneumatic Vacuum (with Weather at bottom) -->
   <section class="panel">
     <div class="bar">Pneumatic Vacuum</div>
     <div class="content">
       <div class="muted" id="pveCount"></div>
+
       <div class="tableWrap">
         <table>
           <thead><tr>
@@ -209,12 +256,29 @@ tbody tr{border-left:10px solid transparent}
           <tbody id="pveBody"></tbody>
         </table>
       </div>
+
+      <!-- Weather Widget -->
+      <div class="weatherWidget" id="weatherWidget">
+        <div class="weatherLeft">
+          <div class="weatherIcon" id="wIcon">⛅</div>
+          <div class="weatherMain">
+            <div class="weatherTemp" id="wTemp">--°F</div>
+            <div class="weatherDesc" id="wDesc">Loading weather…</div>
+          </div>
+        </div>
+        <div class="weatherRight">
+          <div id="wLoc">—</div>
+          <div id="wUpdated">—</div>
+        </div>
+      </div>
+
     </div>
   </section>
 
 </div>
 
 <script>
+/* ================== ORDERS DATA ================== */
 const JSON_URL="https://raw.githubusercontent.com/dksmith22/sharepoint-json-feed-all/refs/heads/main/sharepointdata.json";
 
 const K={
@@ -231,19 +295,20 @@ const isOpen=o=>String(o[K.complete]).toLowerCase()!=="yes";
 const isTS=o=>String(o[K.trench]).toLowerCase()==="yes";
 const isPVE=o=>String(o[K.customer]).toLowerCase().includes("pve");
 
-const fmtDate=d=>{
+function fmtDate(d){
   const x=new Date(d);
   if(isNaN(x))return d||"";
   return `${String(x.getMonth()+1).padStart(2,"0")}/${String(x.getDate()).padStart(2,"0")}/${String(x.getFullYear()).slice(-2)}`;
-};
+}
 
+/* Machine colors */
 function machineColor(ws){
   const s=String(ws||"").toUpperCase();
   if(!s||s.includes("UNASSIGNED"))return null;
-  if(s.includes("SAW"))return "#1f77b4";
-  if(s.includes("MARIO"))return "#2ca02c";
-  if(s.includes("MULTICAM"))return "#ff7f0e";
-  if(s.includes("OWEN"))return "#9467bd";
+  if(s.includes("SAW"))return "#1f77b4";       // Blue
+  if(s.includes("MARIO"))return "#2ca02c";     // Green
+  if(s.includes("MULTICAM"))return "#ff7f0e";  // Orange
+  if(s.includes("OWEN"))return "#9467bd";      // Purple
   return null;
 }
 const tint=h=>h?`rgba(${parseInt(h.substr(1,2),16)},${parseInt(h.substr(3,2),16)},${parseInt(h.substr(5,2),16)},0.1)`:"transparent";
@@ -260,7 +325,7 @@ const row=o=>{
 </tr>`;
 };
 
-async function load(){
+async function loadOrders(){
   const r=await fetch(JSON_URL+"?cb="+Date.now());
   const d=await r.json();
   const open=d.filter(isOpen);
@@ -278,8 +343,102 @@ async function load(){
   pveCount.textContent=`${pve.length} orders`;
 }
 
-load();
-setInterval(load,30000);
+loadOrders();
+setInterval(loadOrders,30000);
+
+/* ================== WEATHER WIDGET ==================
+   Tries GPS. If OptiSigns blocks it, uses fallback coords.
+   Change FALLBACK_LAT/LON to your location if needed.
+====================================================== */
+const FALLBACK_LAT = 33.8126;   // Austell, GA 30168
+const FALLBACK_LON = -84.6344;  // <-- change if you want
+const WEATHER_REFRESH_MS = 10 * 60 * 1000; // every 10 min
+
+function weatherIconFromCode(code){
+  // Open-Meteo weather codes (simple mapping)
+  if (code === 0) return "☀️";
+  if (code === 1 || code === 2) return "🌤️";
+  if (code === 3) return "☁️";
+  if ([45,48].includes(code)) return "🌫️";
+  if ([51,53,55,56,57].includes(code)) return "🌦️";
+  if ([61,63,65,66,67].includes(code)) return "🌧️";
+  if ([71,73,75,77].includes(code)) return "❄️";
+  if ([80,81,82].includes(code)) return "🌧️";
+  if ([85,86].includes(code)) return "🌨️";
+  if ([95,96,99].includes(code)) return "⛈️";
+  return "⛅";
+}
+
+function weatherDescFromCode(code){
+  if (code === 0) return "Clear";
+  if (code === 1) return "Mostly clear";
+  if (code === 2) return "Partly cloudy";
+  if (code === 3) return "Overcast";
+  if (code === 45 || code === 48) return "Fog";
+  if ([51,53,55].includes(code)) return "Drizzle";
+  if ([61,63,65].includes(code)) return "Rain";
+  if ([71,73,75].includes(code)) return "Snow";
+  if ([80,81,82].includes(code)) return "Rain showers";
+  if ([95,96,99].includes(code)) return "Thunderstorm";
+  return "Weather";
+}
+
+async function fetchWeather(lat, lon){
+  const url =
+    "https://api.open-meteo.com/v1/forecast"
+    + `?latitude=${encodeURIComponent(lat)}&longitude=${encodeURIComponent(lon)}`
+    + "&current=temperature_2m,weather_code"
+    + "&temperature_unit=fahrenheit"
+    + "&timezone=auto";
+
+  const r = await fetch(url, { cache:"no-store" });
+  if (!r.ok) throw new Error("Weather HTTP " + r.status);
+  return r.json();
+}
+
+async function updateWeather(lat, lon, label){
+  try{
+    const data = await fetchWeather(lat, lon);
+    const cur = data.current || {};
+    const temp = cur.temperature_2m;
+    const code = cur.weather_code;
+
+    document.getElementById("wIcon").textContent = weatherIconFromCode(code);
+    document.getElementById("wTemp").textContent = (temp ?? "--") + "°F";
+    document.getElementById("wDesc").textContent = weatherDescFromCode(code);
+    document.getElementById("wLoc").textContent = label || "Local Weather";
+    document.getElementById("wUpdated").textContent = "Updated " + new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+  }catch(e){
+    console.error(e);
+    document.getElementById("wDesc").textContent = "Weather unavailable";
+    document.getElementById("wUpdated").textContent = new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+  }
+}
+
+function startWeather(){
+  // Try geolocation first
+  if (navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        updateWeather(lat, lon, "Current Weather");
+        setInterval(() => updateWeather(lat, lon, "Current Weather"), WEATHER_REFRESH_MS);
+      },
+      () => {
+        // Fallback (OptiSigns often ends up here)
+        updateWeather(FALLBACK_LAT, FALLBACK_LON, "Local Weather");
+        setInterval(() => updateWeather(FALLBACK_LAT, FALLBACK_LON, "Local Weather"), WEATHER_REFRESH_MS);
+      },
+      { enableHighAccuracy:false, timeout:4000, maximumAge:600000 }
+    );
+  } else {
+    updateWeather(FALLBACK_LAT, FALLBACK_LON, "Local Weather");
+    setInterval(() => updateWeather(FALLBACK_LAT, FALLBACK_LON, "Local Weather"), WEATHER_REFRESH_MS);
+  }
+}
+
+startWeather();
 </script>
 
 </body>
