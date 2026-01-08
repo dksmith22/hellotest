@@ -140,24 +140,57 @@ tbody tr{border-left:10px solid transparent}
   margin-top:10px;
   border-top:1px solid var(--line);
   background:#fbfbfc;
-  padding:10px 12px;
+  padding:12px 14px;
   border-radius:8px;
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:12px;
-  min-height:86px;
+  min-height:104px; /* a bit taller to support bigger text */
+  border:2px solid transparent;
 }
+
+/* severity colors */
+.weatherWidget.normal{
+  background:#fbfbfc;
+  border-color:rgba(31,78,121,0.18);
+}
+.weatherWidget.advisory{
+  background:rgba(255, 215, 0, 0.16); /* yellow */
+  border-color:rgba(255, 215, 0, 0.55);
+}
+.weatherWidget.watch{
+  background:rgba(255, 140, 0, 0.18); /* orange */
+  border-color:rgba(255, 140, 0, 0.60);
+}
+.weatherWidget.warning{
+  background:rgba(220, 20, 60, 0.14); /* crimson */
+  border-color:rgba(220, 20, 60, 0.60);
+}
+
 .weatherLeft{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:12px;
   min-width:0;
 }
 .weatherIcon{
-  font-size:34px;
+  font-size:44px; /* ~2x-ish */
   line-height:1;
+  display:inline-block;
+  transform-origin:center;
 }
+
+/* small animation */
+.weatherIcon.anim{
+  animation: weatherPulse 1.6s ease-in-out infinite;
+}
+@keyframes weatherPulse{
+  0%   { transform: scale(1);   }
+  50%  { transform: scale(1.12); }
+  100% { transform: scale(1);   }
+}
+
 .weatherMain{
   display:flex;
   flex-direction:column;
@@ -165,21 +198,25 @@ tbody tr{border-left:10px solid transparent}
 }
 .weatherTemp{
   font-weight:900;
-  font-size:22px;
-  line-height:1.1;
+  font-size:42px; /* ~2x */
+  line-height:1.0;
 }
 .weatherDesc{
-  font-size:12px;
+  font-size:18px; /* ~2x */
   color:var(--muted);
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
+  margin-top:4px;
 }
 .weatherRight{
   text-align:right;
-  font-size:11px;
+  font-size:16px; /* bigger */
   color:var(--muted);
   white-space:nowrap;
+}
+.weatherRight strong{
+  color:var(--ink);
 }
 
 @media (max-width:1200px){
@@ -258,16 +295,16 @@ tbody tr{border-left:10px solid transparent}
       </div>
 
       <!-- Weather Widget -->
-      <div class="weatherWidget" id="weatherWidget">
+      <div class="weatherWidget normal" id="weatherWidget">
         <div class="weatherLeft">
-          <div class="weatherIcon" id="wIcon">⛅</div>
+          <div class="weatherIcon anim" id="wIcon">⛅</div>
           <div class="weatherMain">
             <div class="weatherTemp" id="wTemp">--°F</div>
             <div class="weatherDesc" id="wDesc">Loading weather…</div>
           </div>
         </div>
         <div class="weatherRight">
-          <div id="wLoc">—</div>
+          <div><strong id="wLoc">Austell, GA</strong></div>
           <div id="wUpdated">—</div>
         </div>
       </div>
@@ -347,15 +384,13 @@ loadOrders();
 setInterval(loadOrders,30000);
 
 /* ================== WEATHER WIDGET ==================
-   Tries GPS. If OptiSigns blocks it, uses fallback coords.
-   Change FALLBACK_LAT/LON to your location if needed.
+   OptiSigns often blocks geolocation, so we fallback to Austell, GA 30168.
 ====================================================== */
 const FALLBACK_LAT = 33.8126;   // Austell, GA 30168
-const FALLBACK_LON = -84.6344;  // <-- change if you want
+const FALLBACK_LON = -84.6344;
 const WEATHER_REFRESH_MS = 10 * 60 * 1000; // every 10 min
 
 function weatherIconFromCode(code){
-  // Open-Meteo weather codes (simple mapping)
   if (code === 0) return "☀️";
   if (code === 1 || code === 2) return "🌤️";
   if (code === 3) return "☁️";
@@ -383,6 +418,21 @@ function weatherDescFromCode(code){
   return "Weather";
 }
 
+/* Simple severity classification for color alerts */
+function severityFromCode(code){
+  // WARNING (red): thunderstorms, hail-like codes
+  if ([95,96,99].includes(code)) return "warning";
+
+  // WATCH (orange): heavy rain / violent showers / heavy snow
+  if ([65,82,75,86,67].includes(code)) return "watch";
+
+  // ADVISORY (yellow): drizzle / fog / lighter showers / snow
+  if ([45,48,51,53,55,61,63,66,71,73,77,80,81,85].includes(code)) return "advisory";
+
+  // NORMAL: clear/partly cloudy/overcast
+  return "normal";
+}
+
 async function fetchWeather(lat, lon){
   const url =
     "https://api.open-meteo.com/v1/forecast"
@@ -396,6 +446,12 @@ async function fetchWeather(lat, lon){
   return r.json();
 }
 
+function setWidgetSeverity(level){
+  const w = document.getElementById("weatherWidget");
+  w.classList.remove("normal","advisory","watch","warning");
+  w.classList.add(level);
+}
+
 async function updateWeather(lat, lon, label){
   try{
     const data = await fetchWeather(lat, lon);
@@ -406,17 +462,23 @@ async function updateWeather(lat, lon, label){
     document.getElementById("wIcon").textContent = weatherIconFromCode(code);
     document.getElementById("wTemp").textContent = (temp ?? "--") + "°F";
     document.getElementById("wDesc").textContent = weatherDescFromCode(code);
-    document.getElementById("wLoc").textContent = label || "Local Weather";
-    document.getElementById("wUpdated").textContent = "Updated " + new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+    document.getElementById("wLoc").textContent = label || "Austell, GA";
+
+    setWidgetSeverity(severityFromCode(code));
+
+    document.getElementById("wUpdated").textContent =
+      "Updated " + new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
   }catch(e){
     console.error(e);
     document.getElementById("wDesc").textContent = "Weather unavailable";
-    document.getElementById("wUpdated").textContent = new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+    document.getElementById("wUpdated").textContent =
+      "Updated " + new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+    setWidgetSeverity("normal");
   }
 }
 
 function startWeather(){
-  // Try geolocation first
+  // Try geolocation first, fallback to Austell
   if (navigator.geolocation){
     navigator.geolocation.getCurrentPosition(
       pos => {
@@ -426,15 +488,14 @@ function startWeather(){
         setInterval(() => updateWeather(lat, lon, "Current Weather"), WEATHER_REFRESH_MS);
       },
       () => {
-        // Fallback (OptiSigns often ends up here)
-        updateWeather(FALLBACK_LAT, FALLBACK_LON, "Local Weather");
-        setInterval(() => updateWeather(FALLBACK_LAT, FALLBACK_LON, "Local Weather"), WEATHER_REFRESH_MS);
+        updateWeather(FALLBACK_LAT, FALLBACK_LON, "Austell, GA");
+        setInterval(() => updateWeather(FALLBACK_LAT, FALLBACK_LON, "Austell, GA"), WEATHER_REFRESH_MS);
       },
       { enableHighAccuracy:false, timeout:4000, maximumAge:600000 }
     );
   } else {
-    updateWeather(FALLBACK_LAT, FALLBACK_LON, "Local Weather");
-    setInterval(() => updateWeather(FALLBACK_LAT, FALLBACK_LON, "Local Weather"), WEATHER_REFRESH_MS);
+    updateWeather(FALLBACK_LAT, FALLBACK_LON, "Austell, GA");
+    setInterval(() => updateWeather(FALLBACK_LAT, FALLBACK_LON, "Austell, GA"), WEATHER_REFRESH_MS);
   }
 }
 
