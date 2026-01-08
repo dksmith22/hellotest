@@ -15,6 +15,11 @@
       --bar: #1f4e79;
       --bar-ink: #ffffff;
       --accent: #0b6b2a;
+
+      /* These get set dynamically by JS for "fit to screen" */
+      --tbl-font: 14px;
+      --cell-py: 10px;
+      --head-font: 12px;
     }
 
     * { box-sizing: border-box; }
@@ -104,6 +109,7 @@
       align-items:center;
       justify-content:space-between;
       gap: 10px;
+      flex: 0 0 auto;
     }
     .bar .tag{
       font-weight: 800;
@@ -121,38 +127,48 @@
       display:flex;
       flex-direction:column;
       min-height: 0;
+      flex: 1 1 auto;
     }
 
+    /* IMPORTANT: no scrolling on TV */
     .tableWrap{
       border-top: 1px solid var(--line);
       margin-top: 8px;
-      overflow:auto;
+      overflow: hidden; /* <— no scroll */
       min-height: 0;
-      padding-bottom: 10px;
+      flex: 1 1 auto;
     }
 
     table{
       width:100%;
       border-collapse: collapse;
-      font-size: 14px;
+      table-layout: fixed; /* enables ellipsis nicely */
+      font-size: var(--tbl-font);
     }
+
     thead th{
-      position: sticky;
-      top: 0;
       background: #fbfbfc;
-      z-index: 2;
       text-align:left;
       color: var(--muted);
-      font-size: 12px;
+      font-size: var(--head-font);
       letter-spacing: .3px;
       text-transform: uppercase;
       border-bottom: 1px solid var(--line);
-      padding: 10px 10px;
+      padding: 8px 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
+
     tbody td{
       border-bottom: 1px solid var(--line);
-      padding: 10px 10px;
+      padding: var(--cell-py) 10px;
       vertical-align: middle;
+
+      /* keep it tidy on TV */
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     tbody tr:nth-child(even){ background: #fcfdff; }
 
@@ -169,6 +185,7 @@
       font-size: 12px;
       border-top: 1px solid var(--line);
       background: #fbfbfc;
+      flex: 0 0 auto;
     }
     .statusDot{
       width:8px;height:8px;border-radius:50%;
@@ -208,24 +225,20 @@
   </div>
 
   <div class="wrap">
-    <!-- TS -->
-    <section class="panel">
-      <div class="bar">
-        <div>TS</div>
-        <div class="tag">TrenchSafe</div>
-      </div>
+    <section class="panel" id="panel-ts">
+      <div class="bar"><div>TS</div><div class="tag">TrenchSafe</div></div>
       <div class="content">
         <div class="muted" id="tsCount">Loading…</div>
         <div class="tableWrap">
           <table>
             <thead>
               <tr>
-                <th style="width:120px">SO #</th>
-                <th style="width:220px">Customer</th>
-                <th style="width:160px">Workstation</th>
-                <th style="width:140px">Station Order</th>
-                <th style="width:120px">Due Date</th>
-                <th style="width:160px">Sales Person</th>
+                <th style="width:16%">SO #</th>
+                <th style="width:28%">Customer</th>
+                <th style="width:20%">Workstation</th>
+                <th style="width:14%">Station</th>
+                <th style="width:12%">Due</th>
+                <th style="width:20%">Sales</th>
               </tr>
             </thead>
             <tbody id="tsBody"></tbody>
@@ -238,24 +251,20 @@
       </div>
     </section>
 
-    <!-- ALL -->
-    <section class="panel">
-      <div class="bar">
-        <div>ALL</div>
-        <div class="tag">All Open Orders</div>
-      </div>
+    <section class="panel" id="panel-all">
+      <div class="bar"><div>ALL</div><div class="tag">All Open Orders</div></div>
       <div class="content">
         <div class="muted" id="allCount">Loading…</div>
         <div class="tableWrap">
           <table>
             <thead>
               <tr>
-                <th style="width:120px">SO #</th>
-                <th style="width:220px">Customer</th>
-                <th style="width:160px">Workstation</th>
-                <th style="width:140px">Station Order</th>
-                <th style="width:120px">Due Date</th>
-                <th style="width:160px">Sales Person</th>
+                <th style="width:16%">SO #</th>
+                <th style="width:28%">Customer</th>
+                <th style="width:20%">Workstation</th>
+                <th style="width:14%">Station</th>
+                <th style="width:12%">Due</th>
+                <th style="width:20%">Sales</th>
               </tr>
             </thead>
             <tbody id="allBody"></tbody>
@@ -268,24 +277,20 @@
       </div>
     </section>
 
-    <!-- PVE -->
-    <section class="panel">
-      <div class="bar">
-        <div>PVE</div>
-        <div class="tag">Pneumatic Vacuum</div>
-      </div>
+    <section class="panel" id="panel-pve">
+      <div class="bar"><div>PVE</div><div class="tag">Pneumatic Vacuum</div></div>
       <div class="content">
         <div class="muted" id="pveCount">Loading…</div>
         <div class="tableWrap">
           <table>
             <thead>
               <tr>
-                <th style="width:120px">SO #</th>
-                <th style="width:220px">Customer</th>
-                <th style="width:160px">Workstation</th>
-                <th style="width:140px">Station Order</th>
-                <th style="width:120px">Due Date</th>
-                <th style="width:160px">Sales Person</th>
+                <th style="width:16%">SO #</th>
+                <th style="width:28%">Customer</th>
+                <th style="width:20%">Workstation</th>
+                <th style="width:14%">Station</th>
+                <th style="width:12%">Due</th>
+                <th style="width:20%">Sales</th>
               </tr>
             </thead>
             <tbody id="pveBody"></tbody>
@@ -300,13 +305,10 @@
   </div>
 
   <script>
-    // ✅ Your JSON URL
     const JSON_URL = "https://raw.githubusercontent.com/dksmith22/sharepoint-json-feed-all/refs/heads/main/sharepointdata.json";
-
     const REFRESH_MS = 30000;
-    const MAX_ROWS_PER_PANEL = 60;
 
-    // Your JSON keys (exact)
+    // Exact JSON keys
     const K = {
       so: "SO Number",
       customer: "Customer",
@@ -327,29 +329,26 @@
         .replaceAll("'","&#039;");
     }
 
-    function isTrenchSafe(o){
-      // "Yes"/"No" (case-insensitive)
-      return String(o?.[K.trench] ?? "").trim().toLowerCase() === "yes";
-    }
+    function isTrenchSafe(o){ return String(o?.[K.trench] ?? "").trim().toLowerCase() === "yes"; }
+    function isPVE(o){ return String(o?.[K.customer] ?? "").toLowerCase().includes("pve"); }
+    function isOpen(o){ return String(o?.[K.complete] ?? "").trim().toLowerCase() !== "yes"; }
 
-    function isPVE(o){
-      return String(o?.[K.customer] ?? "").toLowerCase().includes("pve");
-    }
-
-    function isOpen(o){
-      // Treat anything other than "Yes" as open
-      return String(o?.[K.complete] ?? "").trim().toLowerCase() !== "yes";
+    function sortBySO(a,b){
+      const an = parseInt(String(a?.[K.so] ?? "").replace(/\D/g,""), 10);
+      const bn = parseInt(String(b?.[K.so] ?? "").replace(/\D/g,""), 10);
+      if (!isNaN(an) && !isNaN(bn)) return an - bn;
+      return String(a?.[K.so] ?? "").localeCompare(String(b?.[K.so] ?? ""));
     }
 
     function rowHtml(o){
       return `
         <tr>
-          <td class="mono">${escapeHtml(o?.[K.so])}</td>
-          <td>${escapeHtml(o?.[K.customer])}</td>
-          <td>${escapeHtml(o?.[K.workstation])}</td>
-          <td>${escapeHtml(o?.[K.stationOrder])}</td>
-          <td class="mono">${escapeHtml(o?.[K.due])}</td>
-          <td>${escapeHtml(o?.[K.sales])}</td>
+          <td class="mono" title="${escapeHtml(o?.[K.so])}">${escapeHtml(o?.[K.so])}</td>
+          <td title="${escapeHtml(o?.[K.customer])}">${escapeHtml(o?.[K.customer])}</td>
+          <td title="${escapeHtml(o?.[K.workstation])}">${escapeHtml(o?.[K.workstation])}</td>
+          <td title="${escapeHtml(o?.[K.stationOrder])}">${escapeHtml(o?.[K.stationOrder])}</td>
+          <td class="mono" title="${escapeHtml(o?.[K.due])}">${escapeHtml(o?.[K.due])}</td>
+          <td title="${escapeHtml(o?.[K.sales])}">${escapeHtml(o?.[K.sales])}</td>
         </tr>
       `;
     }
@@ -364,19 +363,50 @@
     }
 
     function fillPanel(prefix, rows){
-      const body = document.getElementById(prefix + "Body");
-      const count = document.getElementById(prefix + "Count");
-      const slice = rows.slice(0, MAX_ROWS_PER_PANEL);
-      body.innerHTML = slice.map(rowHtml).join("");
-      const extra = rows.length > MAX_ROWS_PER_PANEL ? ` (showing ${MAX_ROWS_PER_PANEL})` : "";
-      count.textContent = `${rows.length} orders${extra}`;
+      document.getElementById(prefix + "Body").innerHTML = rows.map(rowHtml).join("");
+      document.getElementById(prefix + "Count").textContent = `${rows.length} orders`;
     }
 
-    function sortBySO(a,b){
-      const an = parseInt(String(a?.[K.so] ?? "").replace(/\D/g,""), 10);
-      const bn = parseInt(String(b?.[K.so] ?? "").replace(/\D/g,""), 10);
-      if (!isNaN(an) && !isNaN(bn)) return an - bn;
-      return String(a?.[K.so] ?? "").localeCompare(String(b?.[K.so] ?? ""));
+    /**
+     * Auto-fit: shrink font + padding so ALL rows fit in each panel without scrolling.
+     * We compute a target row height from available space / row count.
+     */
+    function autoscaleTables(rowCounts){
+      const maxRows = Math.max(1, ...rowCounts);
+
+      // Measure one panel's available body height (they’re identical height)
+      const panel = document.querySelector(".panel");
+      if (!panel) return;
+
+      const bar = panel.querySelector(".bar");
+      const content = panel.querySelector(".content");
+      const footer = panel.querySelector(".footer");
+      const countLine = content.querySelector(".muted");
+      const thead = panel.querySelector("thead");
+
+      // Available height for tbody rows inside the panel:
+      const panelH = panel.getBoundingClientRect().height;
+      const barH = bar.getBoundingClientRect().height;
+      const footerH = footer.getBoundingClientRect().height;
+      const countH = countLine.getBoundingClientRect().height + 10; // little gap
+      const headH = thead.getBoundingClientRect().height;
+
+      const availableForRows = panelH - barH - footerH - countH - headH - 20; // padding fudge
+
+      // target row height per row for the most crowded table
+      const targetRowH = Math.max(14, Math.floor(availableForRows / maxRows));
+
+      // Convert to font + padding that will fit
+      // clamp font size between 9px and 14px
+      let font = Math.max(9, Math.min(14, Math.floor(targetRowH * 0.52)));
+      let padY = Math.max(2, Math.min(10, Math.floor((targetRowH - font) / 2)));
+
+      // header font also scales slightly (but keep readable)
+      let headFont = Math.max(9, Math.min(12, font - 2));
+
+      document.documentElement.style.setProperty("--tbl-font", font + "px");
+      document.documentElement.style.setProperty("--cell-py", padY + "px");
+      document.documentElement.style.setProperty("--head-font", headFont + "px");
     }
 
     async function loadAndRender(){
@@ -399,6 +429,9 @@
         fillPanel("all", all);
         fillPanel("pve", pve);
 
+        // 🔥 Auto-scale after DOM updates
+        requestAnimationFrame(() => autoscaleTables([ts.length, all.length, pve.length]));
+
         setStatus("ts",  true, "OK", stamp);
         setStatus("all", true, "OK", stamp);
         setStatus("pve", true, "OK", stamp);
@@ -412,6 +445,14 @@
 
     loadAndRender();
     setInterval(loadAndRender, REFRESH_MS);
+
+    // Re-fit if the TV/player changes resolution/orientation
+    window.addEventListener("resize", () => {
+      const tsRows = document.querySelectorAll("#tsBody tr").length;
+      const allRows = document.querySelectorAll("#allBody tr").length;
+      const pveRows = document.querySelectorAll("#pveBody tr").length;
+      autoscaleTables([tsRows, allRows, pveRows]);
+    });
   </script>
 </body>
 </html>
