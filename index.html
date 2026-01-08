@@ -14,8 +14,8 @@
   --tbl-font:14px; --cell-py:10px; --head-font:12px;
 
   /* logo sizing (set by JS) */
-  --logoH: 96px;
-  --logoW: 520px;
+  --logoBase: 84px;   /* TrenchSafe */
+  --logoLarge: 126px;/* Laird (1.5x) */
 }
 
 *{box-sizing:border-box}
@@ -27,41 +27,52 @@ body{
   color:var(--ink)
 }
 
-/* ===== CORNER LOGOS ===== */
-.cornerWrap{
-  position:fixed;
-  top:18px;
-  z-index:1000;
-  pointer-events:none;
-  display:flex;
-  align-items:center;
-}
-.corner-left{left:22px}
-.corner-right{right:22px}
-
-.corner-logo{
-  height:var(--logoH);
-  max-height:var(--logoH);
-  max-width:var(--logoW);
-  width:auto;
-  object-fit:contain;
-}
-
 /* ===== HEADER ===== */
 .top{
-  height:130px;
+  position:relative;
+  height:130px; /* unchanged */
   background:var(--panel);
   border-bottom:1px solid var(--line);
   display:flex;
   align-items:center;
   justify-content:center;
 }
+
+/* Center title */
 .centerTitle{
   font-weight:900;
   font-size:38px;
   letter-spacing:1px;
   color:var(--bar);
   text-transform:uppercase;
+  z-index:2;
+}
+
+/* ===== HEADER LOGOS ===== */
+.header-logo{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  pointer-events:none;
+}
+
+.header-logo.left{
+  left:24px;
+}
+.header-logo.right{
+  right:24px;
+}
+
+.header-logo.left img{
+  height:var(--logoBase);
+  width:auto;
+  object-fit:contain;
+}
+
+.header-logo.right img{
+  height:var(--logoLarge);
+  width:auto;
+  object-fit:contain;
 }
 
 /* ===== LAYOUT ===== */
@@ -134,17 +145,24 @@ tbody tr{border-left:10px solid transparent}
 
 <body>
 
-<!-- Corner logos -->
-<div class="cornerWrap corner-left">
-  <img id="logoLeft" class="corner-logo" alt="TrenchSafe Logo">
-</div>
-<div class="cornerWrap corner-right">
-  <img id="logoRight" class="corner-logo" alt="Laird Plastics Logo">
-</div>
-
-<!-- Header -->
+<!-- HEADER -->
 <div class="top">
+
+  <!-- TrenchSafe logo -->
+  <div class="header-logo left">
+    <img src="https://raw.githubusercontent.com/dksmith22/LegoRoomSchedule/main/TrenchSafe_logo-label.png"
+         alt="TrenchSafe Logo">
+  </div>
+
+  <!-- Title -->
   <div class="centerTitle">OPEN PRODUCTION ORDERS</div>
+
+  <!-- Laird logo (1.5x) -->
+  <div class="header-logo right">
+    <img src="https://raw.githubusercontent.com/dksmith22/LegoRoomSchedule/main/Laird%20Logo.png"
+         alt="Laird Plastics Logo">
+  </div>
+
 </div>
 
 <div class="wrap">
@@ -197,26 +215,6 @@ tbody tr{border-left:10px solid transparent}
 </div>
 
 <script>
-/* LOGO URLS */
-logoLeft.src  = "https://raw.githubusercontent.com/dksmith22/LegoRoomSchedule/main/TrenchSafe_logo-label.png";
-logoRight.src = "https://raw.githubusercontent.com/dksmith22/LegoRoomSchedule/main/Laird%20Logo.png";
-
-/* LOGO SCALING – VISUAL MATCH */
-function scaleLogos(){
-  const is4K = window.innerWidth >= 3000;
-
-  if(is4K){
-    document.documentElement.style.setProperty("--logoH","120px");
-    document.documentElement.style.setProperty("--logoW","620px");
-  }else{
-    document.documentElement.style.setProperty("--logoH","96px");
-    document.documentElement.style.setProperty("--logoW","520px");
-  }
-}
-window.addEventListener("resize", scaleLogos);
-scaleLogos();
-
-/* ================= DATA ================= */
 const JSON_URL="https://raw.githubusercontent.com/dksmith22/sharepoint-json-feed-all/refs/heads/main/sharepointdata.json";
 
 const K={
