@@ -1,458 +1,206 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Open Orders Board</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open Orders Board</title>
 
-  <style>
-    :root{
-      --bg: #f6f7f9;
-      --panel: #ffffff;
-      --ink: #1c232b;
-      --muted: #6b7785;
-      --line: #e6e9ef;
-      --bar: #1f4e79;
-      --bar-ink: #ffffff;
-      --accent: #0b6b2a;
-
-      /* These get set dynamically by JS for "fit to screen" */
-      --tbl-font: 14px;
-      --cell-py: 10px;
-      --head-font: 12px;
-    }
-
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body{
-      margin:0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
-      color: var(--ink);
-    }
-
-    .top{
-      height: 110px;
-      background: var(--panel);
-      border-bottom: 1px solid var(--line);
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding: 14px 28px;
-      gap: 20px;
-    }
-    .logoBox{
-      display:flex;
-      align-items:center;
-      gap: 12px;
-      min-width: 320px;
-    }
-    .logo{
-      height: 64px;
-      width: auto;
-      object-fit: contain;
-    }
-    .brandText{
-      display:flex;
-      flex-direction:column;
-      line-height:1.05;
-    }
-    .brandText .name{
-      font-weight: 800;
-      font-size: 22px;
-      letter-spacing: .3px;
-    }
-    .brandText .sub{
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 700;
-      letter-spacing: .2px;
-    }
-
-    .centerTitle{
-      flex:1;
-      text-align:center;
-      font-weight: 900;
-      font-size: 34px;
-      letter-spacing: 1px;
-      color: var(--bar);
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    .wrap{
-      height: calc(100vh - 110px);
-      padding: 18px 18px 14px 18px;
-      display:grid;
-      grid-template-columns: 1fr 1.2fr 1fr;
-      gap: 18px;
-    }
-
-    .panel{
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      overflow: hidden;
-      display:flex;
-      flex-direction:column;
-      min-height: 0;
-    }
-
-    .bar{
-      background: var(--bar);
-      color: var(--bar-ink);
-      padding: 10px 14px;
-      font-weight: 900;
-      letter-spacing: .6px;
-      text-transform: uppercase;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap: 10px;
-      flex: 0 0 auto;
-    }
-    .bar .tag{
-      font-weight: 800;
-      opacity: .95;
-      letter-spacing: .4px;
-      font-size: 12px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.25);
-      white-space: nowrap;
-    }
-
-    .content{
-      padding: 10px 10px 0 10px;
-      display:flex;
-      flex-direction:column;
-      min-height: 0;
-      flex: 1 1 auto;
-    }
-
-    /* IMPORTANT: no scrolling on TV */
-    .tableWrap{
-      border-top: 1px solid var(--line);
-      margin-top: 8px;
-      overflow: hidden; /* <— no scroll */
-      min-height: 0;
-      flex: 1 1 auto;
-    }
-
-    table{
-      width:100%;
-      border-collapse: collapse;
-      table-layout: fixed; /* enables ellipsis nicely */
-      font-size: var(--tbl-font);
-    }
-
-    thead th{
-      background: #fbfbfc;
-      text-align:left;
-      color: var(--muted);
-      font-size: var(--head-font);
-      letter-spacing: .3px;
-      text-transform: uppercase;
-      border-bottom: 1px solid var(--line);
-      padding: 8px 10px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    tbody td{
-      border-bottom: 1px solid var(--line);
-      padding: var(--cell-py) 10px;
-      vertical-align: middle;
-
-      /* keep it tidy on TV */
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    tbody tr:nth-child(even){ background: #fcfdff; }
-
-    .mono{ font-variant-numeric: tabular-nums; font-feature-settings: "tnum" 1; }
-    .muted{ color: var(--muted); }
-
-    .footer{
-      height: 34px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding: 6px 12px 10px 12px;
-      color: var(--muted);
-      font-size: 12px;
-      border-top: 1px solid var(--line);
-      background: #fbfbfc;
-      flex: 0 0 auto;
-    }
-    .statusDot{
-      width:8px;height:8px;border-radius:50%;
-      background: #28a745;
-      display:inline-block;
-      margin-right: 8px;
-    }
-    .statusDot.bad{ background:#d93025; }
-
-    @media (max-width: 1200px){
-      .wrap{ grid-template-columns: 1fr; }
-      .logoBox{ min-width: unset; }
-      .centerTitle{ font-size: 26px; }
-    }
-  </style>
+<style>
+:root{
+  --bg:#f6f7f9; --panel:#fff; --ink:#1c232b; --muted:#6b7785;
+  --line:#e6e9ef; --bar:#1f4e79; --bar-ink:#fff; --accent:#0b6b2a;
+  --tbl-font:14px; --cell-py:10px; --head-font:12px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);color:var(--ink)
+}
+.top{
+  height:110px;background:var(--panel);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px;gap:20px
+}
+.logoBox{display:flex;align-items:center;gap:12px;min-width:320px}
+.logo{height:64px}
+.brandText{display:flex;flex-direction:column;line-height:1.05}
+.brandText .name{font-weight:800;font-size:22px}
+.brandText .sub{font-size:12px;color:var(--muted);font-weight:700}
+.centerTitle{
+  flex:1;text-align:center;font-weight:900;font-size:34px;
+  letter-spacing:1px;color:var(--bar)
+}
+.wrap{
+  height:calc(100vh - 110px);
+  padding:18px;display:grid;
+  grid-template-columns:1fr 1.2fr 1fr;gap:18px
+}
+.panel{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:10px;display:flex;flex-direction:column;overflow:hidden
+}
+.bar{
+  background:var(--bar);color:var(--bar-ink);
+  padding:10px 14px;font-weight:900;text-transform:uppercase;
+  display:flex;justify-content:space-between
+}
+.tag{
+  font-size:12px;font-weight:800;border:1px solid rgba(255,255,255,.3);
+  padding:4px 8px;border-radius:999px
+}
+.content{padding:10px;display:flex;flex-direction:column;flex:1}
+.tableWrap{overflow:hidden;flex:1;border-top:1px solid var(--line)}
+table{
+  width:100%;border-collapse:collapse;table-layout:fixed;
+  font-size:var(--tbl-font)
+}
+thead th{
+  font-size:var(--head-font);text-transform:uppercase;color:var(--muted);
+  border-bottom:1px solid var(--line);padding:8px 10px
+}
+tbody td{
+  padding:var(--cell-py) 10px;border-bottom:1px solid var(--line);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+tbody tr:nth-child(even){background:#fcfdff}
+.footer{
+  height:34px;display:flex;justify-content:space-between;
+  padding:6px 12px;color:var(--muted);font-size:12px;
+  border-top:1px solid var(--line)
+}
+.statusDot{width:8px;height:8px;border-radius:50%;background:#28a745}
+.statusDot.bad{background:#d93025}
+.mono{font-variant-numeric:tabular-nums}
+</style>
 </head>
 
 <body>
-  <div class="top">
-    <div class="logoBox">
-      <img class="logo" src="https://via.placeholder.com/260x80?text=TrenchSafe+Logo" alt="TrenchSafe" />
-      <div class="brandText">
-        <div class="name" style="color:var(--accent)">TrenchSafe</div>
-        <div class="sub">BUILDING MATERIALS</div>
-      </div>
-    </div>
 
-    <div class="centerTitle">ALL</div>
-
-    <div class="logoBox" style="justify-content:flex-end">
-      <div class="brandText" style="text-align:right">
-        <div class="name" style="color:#1c232b">Laird Plastics</div>
-        <div class="sub">One Source - The Right Way</div>
-      </div>
-      <img class="logo" src="https://via.placeholder.com/260x80?text=Laird+Plastics+Logo" alt="Laird Plastics" />
+<div class="top">
+  <div class="logoBox">
+    <img class="logo" src="https://via.placeholder.com/240x60?text=TrenchSafe">
+    <div class="brandText">
+      <div class="name" style="color:var(--accent)">TrenchSafe</div>
+      <div class="sub">BUILDING MATERIALS</div>
     </div>
   </div>
-
-  <div class="wrap">
-    <section class="panel" id="panel-ts">
-      <div class="bar"><div>TS</div><div class="tag">TrenchSafe</div></div>
-      <div class="content">
-        <div class="muted" id="tsCount">Loading…</div>
-        <div class="tableWrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:16%">SO #</th>
-                <th style="width:28%">Customer</th>
-                <th style="width:20%">Workstation</th>
-                <th style="width:14%">Station</th>
-                <th style="width:12%">Due</th>
-                <th style="width:20%">Sales</th>
-              </tr>
-            </thead>
-            <tbody id="tsBody"></tbody>
-          </table>
-        </div>
-      </div>
-      <div class="footer">
-        <div><span class="statusDot" id="tsDot"></span><span id="tsStatus">OK</span></div>
-        <div class="mono" id="tsUpdated">—</div>
-      </div>
-    </section>
-
-    <section class="panel" id="panel-all">
-      <div class="bar"><div>ALL</div><div class="tag">All Open Orders</div></div>
-      <div class="content">
-        <div class="muted" id="allCount">Loading…</div>
-        <div class="tableWrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:16%">SO #</th>
-                <th style="width:28%">Customer</th>
-                <th style="width:20%">Workstation</th>
-                <th style="width:14%">Station</th>
-                <th style="width:12%">Due</th>
-                <th style="width:20%">Sales</th>
-              </tr>
-            </thead>
-            <tbody id="allBody"></tbody>
-          </table>
-        </div>
-      </div>
-      <div class="footer">
-        <div><span class="statusDot" id="allDot"></span><span id="allStatus">OK</span></div>
-        <div class="mono" id="allUpdated">—</div>
-      </div>
-    </section>
-
-    <section class="panel" id="panel-pve">
-      <div class="bar"><div>PVE</div><div class="tag">Pneumatic Vacuum</div></div>
-      <div class="content">
-        <div class="muted" id="pveCount">Loading…</div>
-        <div class="tableWrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:16%">SO #</th>
-                <th style="width:28%">Customer</th>
-                <th style="width:20%">Workstation</th>
-                <th style="width:14%">Station</th>
-                <th style="width:12%">Due</th>
-                <th style="width:20%">Sales</th>
-              </tr>
-            </thead>
-            <tbody id="pveBody"></tbody>
-          </table>
-        </div>
-      </div>
-      <div class="footer">
-        <div><span class="statusDot" id="pveDot"></span><span id="pveStatus">OK</span></div>
-        <div class="mono" id="pveUpdated">—</div>
-      </div>
-    </section>
+  <div class="centerTitle">OPEN ORDERS</div>
+  <div class="logoBox" style="justify-content:flex-end">
+    <div class="brandText" style="text-align:right">
+      <div class="name">Laird Plastics</div>
+      <div class="sub">One Source – The Right Way</div>
+    </div>
+    <img class="logo" src="https://via.placeholder.com/240x60?text=Laird">
   </div>
+</div>
 
-  <script>
-    const JSON_URL = "https://raw.githubusercontent.com/dksmith22/sharepoint-json-feed-all/refs/heads/main/sharepointdata.json";
-    const REFRESH_MS = 30000;
+<div class="wrap">
 
-    // Exact JSON keys
-    const K = {
-      so: "SO Number",
-      customer: "Customer",
-      workstation: "Workstation",
-      stationOrder: "Station Order",
-      due: "Due Date",
-      sales: "Sales Person",
-      trench: "Trenchsafe",
-      complete: "Complete"
-    };
+<!-- TS -->
+<section class="panel">
+  <div class="bar">TS <span class="tag">TrenchSafe</span></div>
+  <div class="content">
+    <div class="muted" id="tsCount"></div>
+    <div class="tableWrap">
+      <table>
+        <thead><tr>
+          <th>SO #</th><th>Customer</th><th>Workstation</th>
+          <th>Station</th><th>Due</th><th>Sales</th>
+        </tr></thead>
+        <tbody id="tsBody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="footer"><span id="tsStatus">OK</span></div>
+</section>
 
-    function escapeHtml(str){
-      return String(str ?? "")
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-    }
+<!-- ALL -->
+<section class="panel">
+  <div class="bar">ALL <span class="tag">Other Orders</span></div>
+  <div class="content">
+    <div class="muted" id="allCount"></div>
+    <div class="tableWrap">
+      <table>
+        <thead><tr>
+          <th>SO #</th><th>Customer</th><th>Workstation</th>
+          <th>Station</th><th>Due</th><th>Sales</th>
+        </tr></thead>
+        <tbody id="allBody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="footer"><span id="allStatus">OK</span></div>
+</section>
 
-    function isTrenchSafe(o){ return String(o?.[K.trench] ?? "").trim().toLowerCase() === "yes"; }
-    function isPVE(o){ return String(o?.[K.customer] ?? "").toLowerCase().includes("pve"); }
-    function isOpen(o){ return String(o?.[K.complete] ?? "").trim().toLowerCase() !== "yes"; }
+<!-- PVE -->
+<section class="panel">
+  <div class="bar">PVE <span class="tag">PVE Orders</span></div>
+  <div class="content">
+    <div class="muted" id="pveCount"></div>
+    <div class="tableWrap">
+      <table>
+        <thead><tr>
+          <th>SO #</th><th>Customer</th><th>Workstation</th>
+          <th>Station</th><th>Due</th><th>Sales</th>
+        </tr></thead>
+        <tbody id="pveBody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="footer"><span id="pveStatus">OK</span></div>
+</section>
 
-    function sortBySO(a,b){
-      const an = parseInt(String(a?.[K.so] ?? "").replace(/\D/g,""), 10);
-      const bn = parseInt(String(b?.[K.so] ?? "").replace(/\D/g,""), 10);
-      if (!isNaN(an) && !isNaN(bn)) return an - bn;
-      return String(a?.[K.so] ?? "").localeCompare(String(b?.[K.so] ?? ""));
-    }
+</div>
 
-    function rowHtml(o){
-      return `
-        <tr>
-          <td class="mono" title="${escapeHtml(o?.[K.so])}">${escapeHtml(o?.[K.so])}</td>
-          <td title="${escapeHtml(o?.[K.customer])}">${escapeHtml(o?.[K.customer])}</td>
-          <td title="${escapeHtml(o?.[K.workstation])}">${escapeHtml(o?.[K.workstation])}</td>
-          <td title="${escapeHtml(o?.[K.stationOrder])}">${escapeHtml(o?.[K.stationOrder])}</td>
-          <td class="mono" title="${escapeHtml(o?.[K.due])}">${escapeHtml(o?.[K.due])}</td>
-          <td title="${escapeHtml(o?.[K.sales])}">${escapeHtml(o?.[K.sales])}</td>
-        </tr>
-      `;
-    }
+<script>
+const JSON_URL = "https://raw.githubusercontent.com/dksmith22/sharepoint-json-feed-all/refs/heads/main/sharepointdata.json";
 
-    function setStatus(prefix, ok, msg, updatedText){
-      const dot = document.getElementById(prefix + "Dot");
-      const status = document.getElementById(prefix + "Status");
-      const updated = document.getElementById(prefix + "Updated");
-      dot.classList.toggle("bad", !ok);
-      status.textContent = msg;
-      updated.textContent = updatedText;
-    }
+const K = {
+  so:"SO Number", customer:"Customer", workstation:"Workstation",
+  station:"Station Order", due:"Due Date",
+  sales:"Sales Person", trench:"Trenchsafe", complete:"Complete"
+};
 
-    function fillPanel(prefix, rows){
-      document.getElementById(prefix + "Body").innerHTML = rows.map(rowHtml).join("");
-      document.getElementById(prefix + "Count").textContent = `${rows.length} orders`;
-    }
+const esc = s => String(s??"").replace(/[&<>"']/g,m=>(
+  {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]
+));
 
-    /**
-     * Auto-fit: shrink font + padding so ALL rows fit in each panel without scrolling.
-     * We compute a target row height from available space / row count.
-     */
-    function autoscaleTables(rowCounts){
-      const maxRows = Math.max(1, ...rowCounts);
+const isOpen = o => String(o[K.complete]).toLowerCase()!=="yes";
+const isTS   = o => String(o[K.trench]).toLowerCase()==="yes";
+const isPVE  = o => String(o[K.customer]).toLowerCase().includes("pve");
 
-      // Measure one panel's available body height (they’re identical height)
-      const panel = document.querySelector(".panel");
-      if (!panel) return;
+const row = o => `
+<tr>
+<td class="mono">${esc(o[K.so])}</td>
+<td>${esc(o[K.customer])}</td>
+<td>${esc(o[K.workstation])}</td>
+<td>${esc(o[K.station])}</td>
+<td class="mono">${esc(o[K.due])}</td>
+<td>${esc(o[K.sales])}</td>
+</tr>`;
 
-      const bar = panel.querySelector(".bar");
-      const content = panel.querySelector(".content");
-      const footer = panel.querySelector(".footer");
-      const countLine = content.querySelector(".muted");
-      const thead = panel.querySelector("thead");
+async function load(){
+  const res = await fetch(JSON_URL+"?cb="+Date.now());
+  const data = await res.json();
+  const open = data.filter(isOpen);
 
-      // Available height for tbody rows inside the panel:
-      const panelH = panel.getBoundingClientRect().height;
-      const barH = bar.getBoundingClientRect().height;
-      const footerH = footer.getBoundingClientRect().height;
-      const countH = countLine.getBoundingClientRect().height + 10; // little gap
-      const headH = thead.getBoundingClientRect().height;
+  const ts  = open.filter(isTS);
+  const pve = open.filter(isPVE);
+  const all = open.filter(o => !isTS(o) && !isPVE(o));
 
-      const availableForRows = panelH - barH - footerH - countH - headH - 20; // padding fudge
+  tsBody.innerHTML  = ts.map(row).join("");
+  pveBody.innerHTML = pve.map(row).join("");
+  allBody.innerHTML = all.map(row).join("");
 
-      // target row height per row for the most crowded table
-      const targetRowH = Math.max(14, Math.floor(availableForRows / maxRows));
+  tsCount.textContent  = ts.length  + " orders";
+  pveCount.textContent = pve.length + " orders";
+  allCount.textContent = all.length + " orders";
+}
 
-      // Convert to font + padding that will fit
-      // clamp font size between 9px and 14px
-      let font = Math.max(9, Math.min(14, Math.floor(targetRowH * 0.52)));
-      let padY = Math.max(2, Math.min(10, Math.floor((targetRowH - font) / 2)));
+load();
+setInterval(load, 30000);
+</script>
 
-      // header font also scales slightly (but keep readable)
-      let headFont = Math.max(9, Math.min(12, font - 2));
-
-      document.documentElement.style.setProperty("--tbl-font", font + "px");
-      document.documentElement.style.setProperty("--cell-py", padY + "px");
-      document.documentElement.style.setProperty("--head-font", headFont + "px");
-    }
-
-    async function loadAndRender(){
-      const stamp = new Date().toLocaleString();
-      try{
-        const url = JSON_URL + (JSON_URL.includes("?") ? "&" : "?") + "cb=" + Date.now();
-        const res = await fetch(url, { cache: "no-store" });
-        if (!res.ok) throw new Error("HTTP " + res.status);
-
-        const data = await res.json();
-        const orders = Array.isArray(data) ? data : [];
-
-        const openOrders = orders.filter(isOpen).sort(sortBySO);
-
-        const ts  = openOrders.filter(isTrenchSafe);
-        const pve = openOrders.filter(isPVE);
-        const all = openOrders;
-
-        fillPanel("ts", ts);
-        fillPanel("all", all);
-        fillPanel("pve", pve);
-
-        // 🔥 Auto-scale after DOM updates
-        requestAnimationFrame(() => autoscaleTables([ts.length, all.length, pve.length]));
-
-        setStatus("ts",  true, "OK", stamp);
-        setStatus("all", true, "OK", stamp);
-        setStatus("pve", true, "OK", stamp);
-      }catch(e){
-        console.error(e);
-        setStatus("ts",  false, "JSON ERROR", stamp);
-        setStatus("all", false, "JSON ERROR", stamp);
-        setStatus("pve", false, "JSON ERROR", stamp);
-      }
-    }
-
-    loadAndRender();
-    setInterval(loadAndRender, REFRESH_MS);
-
-    // Re-fit if the TV/player changes resolution/orientation
-    window.addEventListener("resize", () => {
-      const tsRows = document.querySelectorAll("#tsBody tr").length;
-      const allRows = document.querySelectorAll("#allBody tr").length;
-      const pveRows = document.querySelectorAll("#pveBody tr").length;
-      autoscaleTables([tsRows, allRows, pveRows]);
-    });
-  </script>
 </body>
 </html>
