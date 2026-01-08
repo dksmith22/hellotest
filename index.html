@@ -9,198 +9,486 @@
 :root{
   --bg:#f6f7f9; --panel:#fff; --ink:#1c232b; --muted:#6b7785;
   --line:#e6e9ef; --bar:#1f4e79; --bar-ink:#fff; --accent:#0b6b2a;
+
+  /* auto-fit variables (set by JS) */
   --tbl-font:14px; --cell-py:10px; --head-font:12px;
 }
+
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
-  margin:0;font-family:Arial,Helvetica,sans-serif;
-  background:var(--bg);color:var(--ink)
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
 }
+
+/* header */
 .top{
   height:110px;background:var(--panel);border-bottom:1px solid var(--line);
   display:flex;align-items:center;justify-content:space-between;
   padding:14px 28px;gap:20px
 }
 .logoBox{display:flex;align-items:center;gap:12px;min-width:320px}
-.logo{height:64px}
+.logo{height:64px;object-fit:contain}
 .brandText{display:flex;flex-direction:column;line-height:1.05}
-.brandText .name{font-weight:800;font-size:22px}
-.brandText .sub{font-size:12px;color:var(--muted);font-weight:700}
+.brandText .name{font-weight:800;font-size:22px;letter-spacing:.3px}
+.brandText .sub{font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.2px}
 .centerTitle{
   flex:1;text-align:center;font-weight:900;font-size:34px;
-  letter-spacing:1px;color:var(--bar)
+  letter-spacing:1px;color:var(--bar);text-transform:uppercase;white-space:nowrap
 }
+
+/* layout */
 .wrap{
   height:calc(100vh - 110px);
-  padding:18px;display:grid;
-  grid-template-columns:1fr 1.2fr 1fr;gap:18px
+  padding:18px;
+  display:grid;
+  grid-template-columns:1fr 1.2fr 1fr;
+  gap:18px
 }
 .panel{
-  background:var(--panel);border:1px solid var(--line);
-  border-radius:10px;display:flex;flex-direction:column;overflow:hidden
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:10px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  min-height:0;
 }
 .bar{
-  background:var(--bar);color:var(--bar-ink);
-  padding:10px 14px;font-weight:900;text-transform:uppercase;
-  display:flex;justify-content:space-between
+  background:var(--bar);
+  color:var(--bar-ink);
+  padding:10px 14px;
+  font-weight:900;
+  text-transform:uppercase;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex:0 0 auto;
 }
 .tag{
-  font-size:12px;font-weight:800;border:1px solid rgba(255,255,255,.3);
-  padding:4px 8px;border-radius:999px
+  font-size:12px;
+  font-weight:800;
+  border:1px solid rgba(255,255,255,.3);
+  padding:4px 8px;
+  border-radius:999px;
+  white-space:nowrap;
 }
-.content{padding:10px;display:flex;flex-direction:column;flex:1}
-.tableWrap{overflow:hidden;flex:1;border-top:1px solid var(--line)}
+.content{
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+  flex:1 1 auto;
+}
+
+/* IMPORTANT: no scrolling for TV */
+.tableWrap{
+  overflow:hidden;
+  flex:1 1 auto;
+  border-top:1px solid var(--line);
+  margin-top:8px;
+  min-height:0;
+}
+
 table{
-  width:100%;border-collapse:collapse;table-layout:fixed;
-  font-size:var(--tbl-font)
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+  font-size:var(--tbl-font);
 }
 thead th{
-  font-size:var(--head-font);text-transform:uppercase;color:var(--muted);
-  border-bottom:1px solid var(--line);padding:8px 10px
+  font-size:var(--head-font);
+  text-transform:uppercase;
+  color:var(--muted);
+  border-bottom:1px solid var(--line);
+  padding:8px 10px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  background:#fbfbfc;
 }
 tbody td{
-  padding:var(--cell-py) 10px;border-bottom:1px solid var(--line);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+  padding:var(--cell-py) 10px;
+  border-bottom:1px solid var(--line);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  vertical-align:middle;
 }
-tbody tr:nth-child(even){background:#fcfdff}
+
+/* Row coloring:
+   - A bold left stripe (machine color)
+   - A soft tinted background */
+tbody tr{
+  border-left:10px solid transparent;
+}
+
 .footer{
-  height:34px;display:flex;justify-content:space-between;
-  padding:6px 12px;color:var(--muted);font-size:12px;
-  border-top:1px solid var(--line)
+  height:34px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:6px 12px;
+  color:var(--muted);
+  font-size:12px;
+  border-top:1px solid var(--line);
+  background:#fbfbfc;
+  flex:0 0 auto;
 }
-.statusDot{width:8px;height:8px;border-radius:50%;background:#28a745}
+.statusDot{width:8px;height:8px;border-radius:50%;background:#28a745;display:inline-block;margin-right:8px}
 .statusDot.bad{background:#d93025}
 .mono{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+
+@media (max-width: 1200px){
+  .wrap{grid-template-columns:1fr}
+  .logoBox{min-width:unset}
+  .centerTitle{font-size:26px}
+}
 </style>
 </head>
 
 <body>
+  <div class="top">
+    <div class="logoBox">
+      <img class="logo" src="https://via.placeholder.com/260x80?text=TrenchSafe+Logo" alt="TrenchSafe">
+      <div class="brandText">
+        <div class="name" style="color:var(--accent)">TrenchSafe</div>
+        <div class="sub">BUILDING MATERIALS</div>
+      </div>
+    </div>
 
-<div class="top">
-  <div class="logoBox">
-    <img class="logo" src="https://via.placeholder.com/240x60?text=TrenchSafe">
-    <div class="brandText">
-      <div class="name" style="color:var(--accent)">TrenchSafe</div>
-      <div class="sub">BUILDING MATERIALS</div>
+    <div class="centerTitle">OPEN ORDERS</div>
+
+    <div class="logoBox" style="justify-content:flex-end">
+      <div class="brandText" style="text-align:right">
+        <div class="name" style="color:#1c232b">Laird Plastics</div>
+        <div class="sub">One Source – The Right Way</div>
+      </div>
+      <img class="logo" src="https://via.placeholder.com/260x80?text=Laird+Plastics+Logo" alt="Laird Plastics">
     </div>
   </div>
-  <div class="centerTitle">OPEN ORDERS</div>
-  <div class="logoBox" style="justify-content:flex-end">
-    <div class="brandText" style="text-align:right">
-      <div class="name">Laird Plastics</div>
-      <div class="sub">One Source – The Right Way</div>
-    </div>
-    <img class="logo" src="https://via.placeholder.com/240x60?text=Laird">
+
+  <div class="wrap">
+
+    <!-- TS -->
+    <section class="panel" id="panel-ts">
+      <div class="bar">
+        <div>TS</div>
+        <div class="tag">TrenchSafe</div>
+      </div>
+      <div class="content">
+        <div class="muted" id="tsCount">Loading…</div>
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:18%">SO #</th>
+                <th style="width:34%">Customer</th>
+                <th style="width:24%">Workstation</th>
+                <th style="width:14%">Station</th>
+                <th style="width:16%">Due</th>
+              </tr>
+            </thead>
+            <tbody id="tsBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="footer">
+        <div><span class="statusDot" id="tsDot"></span><span id="tsStatus">OK</span></div>
+        <div class="mono" id="tsUpdated">—</div>
+      </div>
+    </section>
+
+    <!-- ALL (EXCLUDING TS and PVE) -->
+    <section class="panel" id="panel-all">
+      <div class="bar">
+        <div>ALL</div>
+        <div class="tag">Other Orders</div>
+      </div>
+      <div class="content">
+        <div class="muted" id="allCount">Loading…</div>
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:18%">SO #</th>
+                <th style="width:34%">Customer</th>
+                <th style="width:24%">Workstation</th>
+                <th style="width:14%">Station</th>
+                <th style="width:16%">Due</th>
+              </tr>
+            </thead>
+            <tbody id="allBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="footer">
+        <div><span class="statusDot" id="allDot"></span><span id="allStatus">OK</span></div>
+        <div class="mono" id="allUpdated">—</div>
+      </div>
+    </section>
+
+    <!-- PVE -->
+    <section class="panel" id="panel-pve">
+      <div class="bar">
+        <div>PVE</div>
+        <div class="tag">PVE Orders</div>
+      </div>
+      <div class="content">
+        <div class="muted" id="pveCount">Loading…</div>
+        <div class="tableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:18%">SO #</th>
+                <th style="width:34%">Customer</th>
+                <th style="width:24%">Workstation</th>
+                <th style="width:14%">Station</th>
+                <th style="width:16%">Due</th>
+              </tr>
+            </thead>
+            <tbody id="pveBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="footer">
+        <div><span class="statusDot" id="pveDot"></span><span id="pveStatus">OK</span></div>
+        <div class="mono" id="pveUpdated">—</div>
+      </div>
+    </section>
+
   </div>
-</div>
-
-<div class="wrap">
-
-<!-- TS -->
-<section class="panel">
-  <div class="bar">TS <span class="tag">TrenchSafe</span></div>
-  <div class="content">
-    <div class="muted" id="tsCount"></div>
-    <div class="tableWrap">
-      <table>
-        <thead><tr>
-          <th>SO #</th><th>Customer</th><th>Workstation</th>
-          <th>Station</th><th>Due</th><th>Sales</th>
-        </tr></thead>
-        <tbody id="tsBody"></tbody>
-      </table>
-    </div>
-  </div>
-  <div class="footer"><span id="tsStatus">OK</span></div>
-</section>
-
-<!-- ALL -->
-<section class="panel">
-  <div class="bar">ALL <span class="tag">Other Orders</span></div>
-  <div class="content">
-    <div class="muted" id="allCount"></div>
-    <div class="tableWrap">
-      <table>
-        <thead><tr>
-          <th>SO #</th><th>Customer</th><th>Workstation</th>
-          <th>Station</th><th>Due</th><th>Sales</th>
-        </tr></thead>
-        <tbody id="allBody"></tbody>
-      </table>
-    </div>
-  </div>
-  <div class="footer"><span id="allStatus">OK</span></div>
-</section>
-
-<!-- PVE -->
-<section class="panel">
-  <div class="bar">PVE <span class="tag">PVE Orders</span></div>
-  <div class="content">
-    <div class="muted" id="pveCount"></div>
-    <div class="tableWrap">
-      <table>
-        <thead><tr>
-          <th>SO #</th><th>Customer</th><th>Workstation</th>
-          <th>Station</th><th>Due</th><th>Sales</th>
-        </tr></thead>
-        <tbody id="pveBody"></tbody>
-      </table>
-    </div>
-  </div>
-  <div class="footer"><span id="pveStatus">OK</span></div>
-</section>
-
-</div>
 
 <script>
+/*** DATA SOURCE ***/
 const JSON_URL = "https://raw.githubusercontent.com/dksmith22/sharepoint-json-feed-all/refs/heads/main/sharepointdata.json";
+const REFRESH_MS = 30000;
 
+/*** EXACT JSON KEYS ***/
 const K = {
-  so:"SO Number", customer:"Customer", workstation:"Workstation",
-  station:"Station Order", due:"Due Date",
-  sales:"Sales Person", trench:"Trenchsafe", complete:"Complete"
+  so: "SO Number",
+  customer: "Customer",
+  workstation: "Workstation",
+  station: "Station Order",
+  due: "Due Date",
+  trench: "Trenchsafe",
+  complete: "Complete"
 };
 
-const esc = s => String(s??"").replace(/[&<>"']/g,m=>(
-  {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]
-));
-
-const isOpen = o => String(o[K.complete]).toLowerCase()!=="yes";
-const isTS   = o => String(o[K.trench]).toLowerCase()==="yes";
-const isPVE  = o => String(o[K.customer]).toLowerCase().includes("pve");
-
-const row = o => `
-<tr>
-<td class="mono">${esc(o[K.so])}</td>
-<td>${esc(o[K.customer])}</td>
-<td>${esc(o[K.workstation])}</td>
-<td>${esc(o[K.station])}</td>
-<td class="mono">${esc(o[K.due])}</td>
-<td>${esc(o[K.sales])}</td>
-</tr>`;
-
-async function load(){
-  const res = await fetch(JSON_URL+"?cb="+Date.now());
-  const data = await res.json();
-  const open = data.filter(isOpen);
-
-  const ts  = open.filter(isTS);
-  const pve = open.filter(isPVE);
-  const all = open.filter(o => !isTS(o) && !isPVE(o));
-
-  tsBody.innerHTML  = ts.map(row).join("");
-  pveBody.innerHTML = pve.map(row).join("");
-  allBody.innerHTML = all.map(row).join("");
-
-  tsCount.textContent  = ts.length  + " orders";
-  pveCount.textContent = pve.length + " orders";
-  allCount.textContent = all.length + " orders";
+/*** HELPERS ***/
+function esc(s){
+  return String(s ?? "").replace(/[&<>"']/g, m => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[m]));
 }
 
-load();
-setInterval(load, 30000);
-</script>
+function isOpen(o){ return String(o?.[K.complete] ?? "").trim().toLowerCase() !== "yes"; }
+function isTS(o){ return String(o?.[K.trench] ?? "").trim().toLowerCase() === "yes"; }
+function isPVE(o){ return String(o?.[K.customer] ?? "").toLowerCase().includes("pve"); }
 
+/*** DATE FORMAT: MM/DD/YY (robust) ***/
+function formatMMDDYY(input){
+  const s = String(input ?? "").trim();
+  if (!s) return "";
+
+  // Try native Date parse first
+  let d = new Date(s);
+  if (!isNaN(d.getTime())) return toMMDDYY(d);
+
+  // Try MM/DD/YYYY or M/D/YYYY (or with -)
+  const m = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+  if (m){
+    const mm = parseInt(m[1], 10);
+    const dd = parseInt(m[2], 10);
+    let yy = parseInt(m[3], 10);
+    if (yy < 100) yy += 2000;
+    d = new Date(yy, mm - 1, dd);
+    if (!isNaN(d.getTime())) return toMMDDYY(d);
+  }
+
+  // Try ISO-ish without time: YYYY-MM-DD
+  const iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (iso){
+    d = new Date(parseInt(iso[1],10), parseInt(iso[2],10)-1, parseInt(iso[3],10));
+    if (!isNaN(d.getTime())) return toMMDDYY(d);
+  }
+
+  return s; // fallback: show original if unparseable
+}
+
+function toMMDDYY(d){
+  const mm = String(d.getMonth()+1).padStart(2,"0");
+  const dd = String(d.getDate()).padStart(2,"0");
+  const yy = String(d.getFullYear()).slice(-2);
+  return `${mm}/${dd}/${yy}`;
+}
+
+/*** WORKSTATION COLORS (edit these to match your exact scheme) ***/
+const MACHINE_COLORS = {
+  "MARIO KOMO":   "#1f77b4",
+  "OWEN KOMO":    "#2ca02c",
+  "MULTICAM SAM": "#ff7f0e",
+  "SAW":          "#9467bd",
+  "FAB":          "#d62728",
+  // extras / common variants:
+  "KOMO":         "#1f77b4",
+  "MULTICAM":     "#ff7f0e",
+  "LASER":        "#17becf",
+  "CNC":          "#1f77b4"
+};
+
+function workstationKey(ws){
+  const s = String(ws ?? "").trim().toUpperCase();
+  // normalize a few common patterns
+  if (s.includes("MARIO") && s.includes("KOMO")) return "MARIO KOMO";
+  if (s.includes("OWEN") && s.includes("KOMO")) return "OWEN KOMO";
+  if (s.includes("MULTICAM") && s.includes("SAM")) return "MULTICAM SAM";
+  if (s === "SAW" || s.includes("SAW")) return "SAW";
+  if (s === "FAB" || s.includes("FAB")) return "FAB";
+  if (s.includes("MULTICAM")) return "MULTICAM";
+  if (s.includes("KOMO")) return "KOMO";
+  if (s.includes("LASER")) return "LASER";
+  if (s.includes("CNC")) return "CNC";
+  return ""; // unknown
+}
+
+function machineColor(ws){
+  const key = workstationKey(ws);
+  return MACHINE_COLORS[key] || "#6b7785"; // fallback gray
+}
+
+function tint(hex, alpha){
+  // hex like #rrggbb => rgba(r,g,b,alpha)
+  const h = (hex || "#6b7785").replace("#","");
+  const r = parseInt(h.slice(0,2),16);
+  const g = parseInt(h.slice(2,4),16);
+  const b = parseInt(h.slice(4,6),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+/*** TABLE ROW ***/
+function rowHtml(o){
+  const so = o?.[K.so];
+  const cust = o?.[K.customer];
+  const ws = o?.[K.workstation];
+  const st = o?.[K.station];
+  const due = formatMMDDYY(o?.[K.due]);
+
+  const color = machineColor(ws);
+  const bg = tint(color, 0.10);
+
+  return `
+    <tr style="border-left-color:${color}; background:${bg};">
+      <td class="mono" title="${esc(so)}">${esc(so)}</td>
+      <td title="${esc(cust)}">${esc(cust)}</td>
+      <td title="${esc(ws)}">${esc(ws)}</td>
+      <td title="${esc(st)}">${esc(st)}</td>
+      <td class="mono" title="${esc(due)}">${esc(due)}</td>
+    </tr>
+  `;
+}
+
+/*** STATUS + RENDER ***/
+function setStatus(prefix, ok, msg, updatedText){
+  const dot = document.getElementById(prefix + "Dot");
+  const status = document.getElementById(prefix + "Status");
+  const updated = document.getElementById(prefix + "Updated");
+  dot.classList.toggle("bad", !ok);
+  status.textContent = msg;
+  updated.textContent = updatedText;
+}
+
+function fillPanel(prefix, rows){
+  document.getElementById(prefix + "Body").innerHTML = rows.map(rowHtml).join("");
+  document.getElementById(prefix + "Count").textContent = `${rows.length} orders`;
+}
+
+/*** AUTO-FIT: shrink font/padding so all rows fit (no scrolling) ***/
+function autoscaleTables(rowCounts){
+  const maxRows = Math.max(1, ...rowCounts);
+
+  const panel = document.querySelector(".panel");
+  if (!panel) return;
+
+  const bar = panel.querySelector(".bar");
+  const footer = panel.querySelector(".footer");
+  const countLine = panel.querySelector(".content .muted");
+  const thead = panel.querySelector("thead");
+
+  const panelH = panel.getBoundingClientRect().height;
+  const availableForRows =
+    panelH
+    - bar.getBoundingClientRect().height
+    - footer.getBoundingClientRect().height
+    - (countLine ? countLine.getBoundingClientRect().height : 0)
+    - (thead ? thead.getBoundingClientRect().height : 0)
+    - 34; // padding/fudge
+
+  const targetRowH = Math.max(14, Math.floor(availableForRows / maxRows));
+  const font = Math.max(9, Math.min(14, Math.floor(targetRowH * 0.52)));
+  const padY = Math.max(2, Math.min(10, Math.floor((targetRowH - font) / 2)));
+  const headFont = Math.max(9, Math.min(12, font - 2));
+
+  document.documentElement.style.setProperty("--tbl-font", font + "px");
+  document.documentElement.style.setProperty("--cell-py", padY + "px");
+  document.documentElement.style.setProperty("--head-font", headFont + "px");
+}
+
+/*** SORT (keeps it consistent) ***/
+function sortBySO(a,b){
+  const an = parseInt(String(a?.[K.so] ?? "").replace(/\D/g,""), 10);
+  const bn = parseInt(String(b?.[K.so] ?? "").replace(/\D/g,""), 10);
+  if (!isNaN(an) && !isNaN(bn)) return an - bn;
+  return String(a?.[K.so] ?? "").localeCompare(String(b?.[K.so] ?? ""));
+}
+
+async function loadAndRender(){
+  const stamp = new Date().toLocaleString();
+  try{
+    const url = JSON_URL + (JSON_URL.includes("?") ? "&" : "?") + "cb=" + Date.now();
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+
+    const data = await res.json();
+    const orders = Array.isArray(data) ? data : [];
+
+    const openOrders = orders.filter(isOpen).sort(sortBySO);
+
+    const ts  = openOrders.filter(isTS);
+    const pve = openOrders.filter(isPVE);
+
+    // CENTER = open orders that are NOT TS and NOT PVE
+    const all = openOrders.filter(o => !isTS(o) && !isPVE(o));
+
+    fillPanel("ts", ts);
+    fillPanel("all", all);
+    fillPanel("pve", pve);
+
+    requestAnimationFrame(() => autoscaleTables([ts.length, all.length, pve.length]));
+
+    setStatus("ts",  true, "OK", stamp);
+    setStatus("all", true, "OK", stamp);
+    setStatus("pve", true, "OK", stamp);
+  }catch(e){
+    console.error(e);
+    setStatus("ts",  false, "JSON ERROR", stamp);
+    setStatus("all", false, "JSON ERROR", stamp);
+    setStatus("pve", false, "JSON ERROR", stamp);
+  }
+}
+
+loadAndRender();
+setInterval(loadAndRender, REFRESH_MS);
+
+window.addEventListener("resize", () => {
+  const tsRows = document.querySelectorAll("#tsBody tr").length;
+  const allRows = document.querySelectorAll("#allBody tr").length;
+  const pveRows = document.querySelectorAll("#pveBody tr").length;
+  autoscaleTables([tsRows, allRows, pveRows]);
+});
+</script>
 </body>
 </html>
