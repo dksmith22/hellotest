@@ -7,33 +7,26 @@
 
 <style>
 :root{
-  --bg:#f6f7f9;
-  --panel:#ffffff;
-  --ink:#1c232b;
-  --muted:#6b7785;
-  --line:#e6e9ef;
-  --bar:#1f4e79;
-  --bar-ink:#ffffff;
+  --bg:#f6f7f9; --panel:#fff; --ink:#1c232b; --muted:#6b7785;
+  --line:#e6e9ef; --bar:#1f4e79; --bar-ink:#fff;
 
-  --tbl-font:14px;
-  --cell-py:10px;
-  --head-font:12px;
+  --tbl-font:14px; --cell-py:10px; --head-font:12px;
 
-  /* logos */
-  --logoBase:84px;     /* TrenchSafe */
-  --logoLarge:126px;   /* Laird 1.5x */
+  /* Logo sizing */
+  --logoBase: 84px;    /* TrenchSafe */
+  --logoLarge: 126px;  /* Laird (1.5x) */
 }
 
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
   margin:0;
-  font-family:Arial, Helvetica, sans-serif;
+  font-family:Arial,Helvetica,sans-serif;
   background:var(--bg);
-  color:var(--ink);
+  color:var(--ink)
 }
 
-/* ===== HEADER ===== */
+/* ===== HEADER (height unchanged) ===== */
 .top{
   position:relative;
   height:130px;
@@ -49,21 +42,31 @@ body{
   letter-spacing:1px;
   color:var(--bar);
   text-transform:uppercase;
+  z-index:2;
 }
 
-/* logos */
+/* ===== HEADER LOGOS (centered vertically) ===== */
 .header-logo{
   position:absolute;
   top:50%;
   transform:translateY(-50%);
+  pointer-events:none;
 }
-.header-logo.left{left:24px}
-.header-logo.right{right:24px}
+.header-logo.left{ left:24px; }
+.header-logo.right{ right:24px; }
 
-.header-logo.left img{height:var(--logoBase)}
-.header-logo.right img{height:var(--logoLarge)}
+.header-logo.left img{
+  height:var(--logoBase);
+  width:auto;
+  object-fit:contain;
+}
+.header-logo.right img{
+  height:var(--logoLarge);
+  width:auto;
+  object-fit:contain;
+}
 
-/* ===== MAIN GRID ===== */
+/* ===== MAIN LAYOUT ===== */
 .wrap{
   height:calc(100vh - 130px);
   padding:18px;
@@ -71,7 +74,6 @@ body{
   grid-template-columns:1fr 1.2fr 1fr;
   gap:18px;
 }
-
 .panel{
   background:var(--panel);
   border:1px solid var(--line);
@@ -79,31 +81,31 @@ body{
   display:flex;
   flex-direction:column;
   overflow:hidden;
+  min-height:0;
 }
-
 .bar{
   background:var(--bar);
   color:var(--bar-ink);
-  padding:12px;
+  padding:12px 14px;
   font-weight:900;
-  text-align:center;
   text-transform:uppercase;
+  text-align:center;
+  flex:0 0 auto;
 }
-
 .content{
   padding:10px;
   display:flex;
   flex-direction:column;
   flex:1;
+  min-height:0;
 }
-
 .tableWrap{
-  overflow:hidden;
-  flex:1;
+  overflow:hidden;     /* no scrolling */
+  flex:1 1 auto;
   border-top:1px solid var(--line);
   margin-top:8px;
+  min-height:0;
 }
-
 table{
   width:100%;
   border-collapse:collapse;
@@ -113,96 +115,143 @@ table{
 thead th{
   font-size:var(--head-font);
   color:var(--muted);
-  padding:8px;
   border-bottom:1px solid var(--line);
+  padding:8px 10px;
   background:#fbfbfc;
+  text-transform:uppercase;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 tbody td{
-  padding:var(--cell-py) 8px;
+  padding:var(--cell-py) 10px;
   border-bottom:1px solid var(--line);
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
 }
-tbody tr{border-left:8px solid transparent}
+tbody tr{border-left:10px solid transparent}
+.mono{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
 
-/* ===== WEATHER WIDGET ===== */
+/* ===== Weather widget (bottom of Pneumatic column) ===== */
 .weatherWidget{
+  flex:0 0 auto;
   margin-top:10px;
-  padding:14px;
+  border-top:1px solid var(--line);
+  background:#fbfbfc;
+  padding:12px 14px;
   border-radius:8px;
-  border:2px solid transparent;
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  min-height:110px;
+  justify-content:space-between;
+  gap:12px;
+  min-height:104px; /* a bit taller to support bigger text */
+  border:2px solid transparent;
 }
 
+/* severity colors */
 .weatherWidget.normal{
   background:#fbfbfc;
-  border-color:rgba(31,78,121,.25);
+  border-color:rgba(31,78,121,0.18);
 }
 .weatherWidget.advisory{
-  background:rgba(255,215,0,.18);
-  border-color:rgba(255,215,0,.6);
+  background:rgba(255, 215, 0, 0.16); /* yellow */
+  border-color:rgba(255, 215, 0, 0.55);
 }
 .weatherWidget.watch{
-  background:rgba(255,140,0,.20);
-  border-color:rgba(255,140,0,.7);
+  background:rgba(255, 140, 0, 0.18); /* orange */
+  border-color:rgba(255, 140, 0, 0.60);
 }
 .weatherWidget.warning{
-  background:rgba(220,20,60,.18);
-  border-color:rgba(220,20,60,.7);
+  background:rgba(220, 20, 60, 0.14); /* crimson */
+  border-color:rgba(220, 20, 60, 0.60);
 }
 
 .weatherLeft{
   display:flex;
-  gap:14px;
   align-items:center;
+  gap:12px;
+  min-width:0;
 }
 .weatherIcon{
-  font-size:44px;
-  animation:pulse 1.5s infinite;
+  font-size:44px; /* ~2x-ish */
+  line-height:1;
+  display:inline-block;
+  transform-origin:center;
 }
-@keyframes pulse{
-  0%{transform:scale(1)}
-  50%{transform:scale(1.15)}
-  100%{transform:scale(1)}
+
+/* small animation */
+.weatherIcon.anim{
+  animation: weatherPulse 1.6s ease-in-out infinite;
+}
+@keyframes weatherPulse{
+  0%   { transform: scale(1);   }
+  50%  { transform: scale(1.12); }
+  100% { transform: scale(1);   }
+}
+
+.weatherMain{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
 }
 .weatherTemp{
-  font-size:42px;
   font-weight:900;
+  font-size:42px; /* ~2x */
+  line-height:1.0;
 }
 .weatherDesc{
-  font-size:18px;
+  font-size:18px; /* ~2x */
   color:var(--muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  margin-top:4px;
 }
 .weatherRight{
   text-align:right;
-  font-size:16px;
+  font-size:16px; /* bigger */
   color:var(--muted);
+  white-space:nowrap;
 }
-.weatherRight strong{color:var(--ink)}
+.weatherRight strong{
+  color:var(--ink);
+}
+
+@media (max-width:1200px){
+  .wrap{grid-template-columns:1fr}
+  .centerTitle{font-size:30px}
+}
 </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
 <div class="top">
+
   <div class="header-logo left">
-    <img src="https://raw.githubusercontent.com/dksmith22/LegoRoomSchedule/main/TrenchSafe_logo-label.png">
+    <img src="https://raw.githubusercontent.com/dksmith22/LegoRoomSchedule/main/TrenchSafe_logo-label.png"
+         alt="TrenchSafe Logo">
   </div>
+
   <div class="centerTitle">OPEN PRODUCTION ORDERS</div>
+
   <div class="header-logo right">
-    <img src="https://raw.githubusercontent.com/dksmith22/LegoRoomSchedule/main/Laird%20Logo.png">
+    <img src="https://raw.githubusercontent.com/dksmith22/LegoRoomSchedule/main/Laird%20Logo.png"
+         alt="Laird Plastics Logo">
   </div>
+
 </div>
 
 <div class="wrap">
 
+  <!-- TrenchSafe -->
   <section class="panel">
     <div class="bar">TrenchSafe</div>
     <div class="content">
+      <div class="muted" id="tsCount"></div>
       <div class="tableWrap">
         <table>
           <thead><tr>
@@ -214,9 +263,11 @@ tbody tr{border-left:8px solid transparent}
     </div>
   </section>
 
+  <!-- Laird Plastics -->
   <section class="panel">
     <div class="bar">Laird Plastics</div>
     <div class="content">
+      <div class="muted" id="allCount"></div>
       <div class="tableWrap">
         <table>
           <thead><tr>
@@ -228,9 +279,12 @@ tbody tr{border-left:8px solid transparent}
     </div>
   </section>
 
+  <!-- Pneumatic Vacuum (with Weather at bottom) -->
   <section class="panel">
     <div class="bar">Pneumatic Vacuum</div>
     <div class="content">
+      <div class="muted" id="pveCount"></div>
+
       <div class="tableWrap">
         <table>
           <thead><tr>
@@ -240,17 +294,17 @@ tbody tr{border-left:8px solid transparent}
         </table>
       </div>
 
-      <!-- Weather -->
+      <!-- Weather Widget -->
       <div class="weatherWidget normal" id="weatherWidget">
         <div class="weatherLeft">
-          <div class="weatherIcon" id="wIcon">⛅</div>
-          <div>
+          <div class="weatherIcon anim" id="wIcon">⛅</div>
+          <div class="weatherMain">
             <div class="weatherTemp" id="wTemp">--°F</div>
             <div class="weatherDesc" id="wDesc">Loading weather…</div>
           </div>
         </div>
         <div class="weatherRight">
-          <div><strong>Austell, GA</strong></div>
+          <div><strong id="wLoc">Austell, GA</strong></div>
           <div id="wUpdated">—</div>
         </div>
       </div>
@@ -261,41 +315,191 @@ tbody tr{border-left:8px solid transparent}
 </div>
 
 <script>
-/* ===== WEATHER ===== */
-const FALLBACK_LAT=33.8126;
-const FALLBACK_LON=-84.6344;
+/* ================== ORDERS DATA ================== */
+const JSON_URL="https://raw.githubusercontent.com/dksmith22/sharepoint-json-feed-all/refs/heads/main/sharepointdata.json";
 
-function severityFromCode(c){
-  if([95,96,99].includes(c)) return "warning";
-  if([65,82,75,86].includes(c)) return "watch";
-  if([45,48,51,53,55,61,63].includes(c)) return "advisory";
-  return "normal";
+const K={
+  so:"SO Number", customer:"Customer", workstation:"Workstation",
+  station:"Station Order", due:"Due Date",
+  trench:"Trenchsafe", complete:"Complete"
+};
+
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>(
+  {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]
+));
+
+const isOpen=o=>String(o[K.complete]).toLowerCase()!=="yes";
+const isTS=o=>String(o[K.trench]).toLowerCase()==="yes";
+const isPVE=o=>String(o[K.customer]).toLowerCase().includes("pve");
+
+function fmtDate(d){
+  const x=new Date(d);
+  if(isNaN(x))return d||"";
+  return `${String(x.getMonth()+1).padStart(2,"0")}/${String(x.getDate()).padStart(2,"0")}/${String(x.getFullYear()).slice(-2)}`;
 }
 
-function icon(c){
-  if(c===0) return "☀️";
-  if([1,2].includes(c)) return "🌤️";
-  if(c===3) return "☁️";
-  if([95,96,99].includes(c)) return "⛈️";
-  if([61,63,65].includes(c)) return "🌧️";
+/* Machine colors */
+function machineColor(ws){
+  const s=String(ws||"").toUpperCase();
+  if(!s||s.includes("UNASSIGNED"))return null;
+  if(s.includes("SAW"))return "#1f77b4";       // Blue
+  if(s.includes("MARIO"))return "#2ca02c";     // Green
+  if(s.includes("MULTICAM"))return "#ff7f0e";  // Orange
+  if(s.includes("OWEN"))return "#9467bd";      // Purple
+  return null;
+}
+const tint=h=>h?`rgba(${parseInt(h.substr(1,2),16)},${parseInt(h.substr(3,2),16)},${parseInt(h.substr(5,2),16)},0.1)`:"transparent";
+
+const row=o=>{
+  const c=machineColor(o[K.workstation]);
+  return `
+<tr style="border-left-color:${c||"transparent"};background:${tint(c)}">
+<td class="mono">${esc(o[K.so])}</td>
+<td>${esc(o[K.customer])}</td>
+<td>${esc(o[K.workstation])}</td>
+<td>${esc(o[K.station])}</td>
+<td class="mono">${esc(fmtDate(o[K.due]))}</td>
+</tr>`;
+};
+
+async function loadOrders(){
+  const r=await fetch(JSON_URL+"?cb="+Date.now());
+  const d=await r.json();
+  const open=d.filter(isOpen);
+
+  const ts=open.filter(isTS);
+  const pve=open.filter(isPVE);
+  const all=open.filter(o=>!isTS(o)&&!isPVE(o));
+
+  tsBody.innerHTML=ts.map(row).join("");
+  allBody.innerHTML=all.map(row).join("");
+  pveBody.innerHTML=pve.map(row).join("");
+
+  tsCount.textContent=`${ts.length} orders`;
+  allCount.textContent=`${all.length} orders`;
+  pveCount.textContent=`${pve.length} orders`;
+}
+
+loadOrders();
+setInterval(loadOrders,30000);
+
+/* ================== WEATHER WIDGET ==================
+   OptiSigns often blocks geolocation, so we fallback to Austell, GA 30168.
+====================================================== */
+const FALLBACK_LAT = 33.8126;   // Austell, GA 30168
+const FALLBACK_LON = -84.6344;
+const WEATHER_REFRESH_MS = 10 * 60 * 1000; // every 10 min
+
+function weatherIconFromCode(code){
+  if (code === 0) return "☀️";
+  if (code === 1 || code === 2) return "🌤️";
+  if (code === 3) return "☁️";
+  if ([45,48].includes(code)) return "🌫️";
+  if ([51,53,55,56,57].includes(code)) return "🌦️";
+  if ([61,63,65,66,67].includes(code)) return "🌧️";
+  if ([71,73,75,77].includes(code)) return "❄️";
+  if ([80,81,82].includes(code)) return "🌧️";
+  if ([85,86].includes(code)) return "🌨️";
+  if ([95,96,99].includes(code)) return "⛈️";
   return "⛅";
 }
 
-async function updateWeather(){
-  const url=`https://api.open-meteo.com/v1/forecast?latitude=${FALLBACK_LAT}&longitude=${FALLBACK_LON}&current=temperature_2m,weather_code&temperature_unit=fahrenheit&timezone=auto`;
-  const r=await fetch(url);
-  const d=await r.json();
-  const c=d.current.weather_code;
-
-  wIcon.textContent=icon(c);
-  wTemp.textContent=d.current.temperature_2m+"°F";
-  wDesc.textContent="Current conditions";
-
-  weatherWidget.className="weatherWidget "+severityFromCode(c);
-  wUpdated.textContent="Updated "+new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+function weatherDescFromCode(code){
+  if (code === 0) return "Clear";
+  if (code === 1) return "Mostly clear";
+  if (code === 2) return "Partly cloudy";
+  if (code === 3) return "Overcast";
+  if (code === 45 || code === 48) return "Fog";
+  if ([51,53,55].includes(code)) return "Drizzle";
+  if ([61,63,65].includes(code)) return "Rain";
+  if ([71,73,75].includes(code)) return "Snow";
+  if ([80,81,82].includes(code)) return "Rain showers";
+  if ([95,96,99].includes(code)) return "Thunderstorm";
+  return "Weather";
 }
-updateWeather();
-setInterval(updateWeather,600000);
+
+/* Simple severity classification for color alerts */
+function severityFromCode(code){
+  // WARNING (red): thunderstorms, hail-like codes
+  if ([95,96,99].includes(code)) return "warning";
+
+  // WATCH (orange): heavy rain / violent showers / heavy snow
+  if ([65,82,75,86,67].includes(code)) return "watch";
+
+  // ADVISORY (yellow): drizzle / fog / lighter showers / snow
+  if ([45,48,51,53,55,61,63,66,71,73,77,80,81,85].includes(code)) return "advisory";
+
+  // NORMAL: clear/partly cloudy/overcast
+  return "normal";
+}
+
+async function fetchWeather(lat, lon){
+  const url =
+    "https://api.open-meteo.com/v1/forecast"
+    + `?latitude=${encodeURIComponent(lat)}&longitude=${encodeURIComponent(lon)}`
+    + "&current=temperature_2m,weather_code"
+    + "&temperature_unit=fahrenheit"
+    + "&timezone=auto";
+
+  const r = await fetch(url, { cache:"no-store" });
+  if (!r.ok) throw new Error("Weather HTTP " + r.status);
+  return r.json();
+}
+
+function setWidgetSeverity(level){
+  const w = document.getElementById("weatherWidget");
+  w.classList.remove("normal","advisory","watch","warning");
+  w.classList.add(level);
+}
+
+async function updateWeather(lat, lon, label){
+  try{
+    const data = await fetchWeather(lat, lon);
+    const cur = data.current || {};
+    const temp = cur.temperature_2m;
+    const code = cur.weather_code;
+
+    document.getElementById("wIcon").textContent = weatherIconFromCode(code);
+    document.getElementById("wTemp").textContent = (temp ?? "--") + "°F";
+    document.getElementById("wDesc").textContent = weatherDescFromCode(code);
+    document.getElementById("wLoc").textContent = label || "Austell, GA";
+
+    setWidgetSeverity(severityFromCode(code));
+
+    document.getElementById("wUpdated").textContent =
+      "Updated " + new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+  }catch(e){
+    console.error(e);
+    document.getElementById("wDesc").textContent = "Weather unavailable";
+    document.getElementById("wUpdated").textContent =
+      "Updated " + new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+    setWidgetSeverity("normal");
+  }
+}
+
+function startWeather(){
+  // Try geolocation first, fallback to Austell
+  if (navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        updateWeather(lat, lon, "Current Weather");
+        setInterval(() => updateWeather(lat, lon, "Current Weather"), WEATHER_REFRESH_MS);
+      },
+      () => {
+        updateWeather(FALLBACK_LAT, FALLBACK_LON, "Austell, GA");
+        setInterval(() => updateWeather(FALLBACK_LAT, FALLBACK_LON, "Austell, GA"), WEATHER_REFRESH_MS);
+      },
+      { enableHighAccuracy:false, timeout:4000, maximumAge:600000 }
+    );
+  } else {
+    updateWeather(FALLBACK_LAT, FALLBACK_LON, "Austell, GA");
+    setInterval(() => updateWeather(FALLBACK_LAT, FALLBACK_LON, "Austell, GA"), WEATHER_REFRESH_MS);
+  }
+}
+
+startWeather();
 </script>
 
 </body>
